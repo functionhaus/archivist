@@ -43,10 +43,10 @@ end
 
 # Usage
 
-Create your articles and topics directories at `priv/archivist` at the root of
+Create your articles and topics directories at `priv/articles` at the root of
 your elixir library. For example:
 
-`priv/archivist/journey_to_the_center_of_the_earth.ad`
+`priv/articles/journey_to_the_center_of_the_earth.ad`
 
 ## Availability
 
