@@ -3,16 +3,21 @@ defmodule Archivist do
   Documentation for Archivist.
   """
 
-  @doc """
-  Hello world.
+  # @articles
 
-  ## Examples
+  # @topics
 
-      iex> Archivist.hello()
-      :world
+  # @tags
 
-  """
-  def hello do
-    :world
+  # @authors
+
+  def article_paths do
+    article_glob()
+    |> Path.wildcard
+  end
+
+  def article_glob do
+    Path.relative_to_cwd("priv/articles")
+    |> Path.join(["**/*.ad"])
   end
 end
