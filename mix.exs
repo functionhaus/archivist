@@ -41,7 +41,8 @@ defmodule Archivist.MixProject do
   defp deps do
     [
       {:arcdown, "~> 0.1"},
-      {:ex_doc, "~> 0.19", only: :docs}
+      {:ex_doc, "~> 0.19", only: :docs},
+      {:meck, "~> 0.8", only: :test}
     ]
   end
 
