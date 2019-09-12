@@ -3,12 +3,6 @@ defmodule Archivist do
   Documentation for Archivist.
   """
 
-  # define the behaviour interface, primarily for Mox exposure
-  @callback article_paths() :: [String.t]
-  @callback article_glob() :: String.t
-  @callback content_dir() :: String.t
-  @callback match_pattern() :: String.t
-
   @content_dir "priv/articles"
   @match_pattern "**/*.ad"
 
