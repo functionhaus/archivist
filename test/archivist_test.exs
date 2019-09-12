@@ -1,18 +1,11 @@
 defmodule ArchivistTest do
-  use ExUnit.Case
-  import Mox
-
-  doctest Archivist
-
-  setup :set_mox_global
-  setup :verify_on_exit!
+  use ExUnit.Case, async: false
 
   test "constructs the correct matcher glob" do
     assert Archivist.article_glob() =~ "priv/articles/**/*.ad"
   end
 
-  test "finds the correct article paths" do
-    expect(ArchMock, :content_dir, fn -> "test/support/articles" end)
-    assert ArchMock.article_glob() == "test/support/articles/**/*.ad"
+  test "constructs a list of article paths" do
+    assert Archivist.article_paths() == ["priv/articles/the_day_the_earth_stood_still.ad"]
   end
 end

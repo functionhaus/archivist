@@ -26,16 +26,8 @@ defmodule Archivist do
   end
 
   def article_glob do
-    content_dir()
-    |> Path.relative_to_cwd
-    |> Path.join([match_pattern()])
-  end
-
-  def content_dir do
     @content_dir
-  end
-
-  def match_pattern do
-    @match_pattern
+    |> Path.relative_to_cwd
+    |> Path.join([@match_pattern])
   end
 end
