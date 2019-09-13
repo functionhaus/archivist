@@ -55,7 +55,11 @@ defmodule Archivist do
     match_pattern = settings[:match_pattern]
 
     article_paths = article_paths(content_dir, match_pattern)
-    articles_stream = articles_stream(article_paths)
+    parsed_articles = parse_articles(article_paths)
+
+    topics = parse_list(:topics, parsed_articles)
+    tags = parse_list(:tags, parsed_articles)
+    authors = parse_attr(:author, parsed_articles)
 
     external_resources = article_paths
       |> Enum.map(&quote(do: @external_resource unquote(&1)))
@@ -64,19 +68,19 @@ defmodule Archivist do
       unquote(external_resources)
 
       def articles do
-        unquote(articles_stream)
+        unquote Macro.escape(parsed_articles)
       end
 
       def topics do
-        unquote parse_lists(:topics, articles_stream)
+        unquote topics
       end
 
       def tags do
-        unquote parse_lists(:tags, articles_stream)
+        unquote tags
       end
 
       def authors do
-        unquote parse_attrs(:author, articles_stream)
+        unquote authors
       end
     end
   end
@@ -88,28 +92,29 @@ defmodule Archivist do
     |> Path.wildcard
   end
 
-  defp articles_stream(article_paths) do
-    Stream.map(article_paths, fn path ->
+  defp parse_articles(article_paths) do
+    Enum.map(article_paths, fn path ->
       {:ok, parsed} = Arcdown.parse_file(path)
       parsed
     end)
   end
 
-  def parse_attrs(attr, articles) do
+  def parse_list(attr, articles) do
     articles
-    |> Stream.flat_map(fn article -> Map.get(article, attr) end)
-    |> Stream.reject(&is_nil/1)
-    |> Stream.uniq
-    |> Stream.into([])
-    |> Stream.flat_map(&(&1))
-    |> Enum.sort
+    |> Enum.flat_map(fn article -> Map.get(article, attr) end)
+    |> sanitize_parsed
   end
 
-  def parse_lists(attr, articles) do
+  def parse_attr(attr, articles) do
     articles
-    |> Stream.flat_map(fn article -> Map.get(article, attr) end)
-    |> Stream.reject(&is_nil/1)
-    |> Stream.uniq
+    |> Enum.map(fn article -> Map.get(article, attr) end)
+    |> sanitize_parsed
+  end
+
+  defp sanitize_parsed(parsed_vals) do
+    parsed_vals
+    |> Enum.reject(&is_nil/1)
+    |> Enum.uniq
     |> Enum.sort
   end
 end
