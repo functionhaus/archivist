@@ -68,7 +68,9 @@ defmodule Archivist do
       unquote(external_resources)
 
       def articles do
-        unquote Macro.escape(parsed_articles)
+        unquote parsed_articles
+          |> Enum.to_list
+          |> Macro.escape
       end
 
       def topics do
@@ -93,28 +95,32 @@ defmodule Archivist do
   end
 
   defp parse_articles(article_paths) do
-    Enum.map(article_paths, fn path ->
+    Stream.map(article_paths, fn path ->
       {:ok, parsed} = Arcdown.parse_file(path)
       parsed
     end)
   end
 
+  # defp parse_articles(article_paths) do
+  #   Stream.map(article_paths, &Arcdown.parse_file(&1))
+  # end
+
   def parse_list(attr, articles) do
     articles
-    |> Enum.flat_map(fn article -> Map.get(article, attr) end)
+    |> Stream.flat_map(fn article -> Map.get(article, attr) end)
     |> sanitize_parsed
   end
 
   def parse_attr(attr, articles) do
     articles
-    |> Enum.map(fn article -> Map.get(article, attr) end)
+    |> Stream.map(fn article -> Map.get(article, attr) end)
     |> sanitize_parsed
   end
 
   defp sanitize_parsed(parsed_vals) do
     parsed_vals
-    |> Enum.reject(&is_nil/1)
-    |> Enum.uniq
+    |> Stream.reject(&is_nil/1)
+    |> Stream.uniq
     |> Enum.sort
   end
 end
