@@ -55,7 +55,11 @@ defmodule Archivist do
     match_pattern = settings[:match_pattern]
 
     article_paths = article_paths(content_dir, match_pattern)
-    articles_stream = articles_stream(article_paths)
+    articles_stream = article_paths
+      |> articles_stream
+
+    articles = Enum.to_list(articles_stream)
+      |> Macro.escape
 
     external_resources = article_paths
       |> Enum.map(&quote(do: @external_resource unquote(&1)))
@@ -64,19 +68,19 @@ defmodule Archivist do
       unquote(external_resources)
 
       def articles do
-        Enum.to_list unquote(articles_stream)
+        unquote(articles)
       end
 
       def topics do
-        parse_attrs(:topics, unquote(articles_stream))
+        unquote parse_attrs(:topics, articles)
       end
 
       def tags do
-        parse_attrs(:tags, unquote(articles_stream))
+        unquote parse_attrs(:tags, articles)
       end
 
       def authors do
-        parse_attrs(:author, unquote(articles_stream))
+        unquote parse_attrs(:author, articles)
       end
     end
   end
@@ -95,8 +99,8 @@ defmodule Archivist do
     end)
   end
 
-  def parse_attrs(attr, articles_stream) do
-    articles_stream
+  def parse_attrs(attr, articles) do
+    articles
     |> Stream.flat_map(fn article -> article[attr] end)
     |> Stream.reject(&is_nil/1)
     |> Stream.uniq
