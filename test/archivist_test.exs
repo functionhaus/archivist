@@ -1,5 +1,5 @@
 defmodule ArchivistMock do
-  use Archivist
+  use Archivist, content_dir: "test/support/articles"
 end
 
 defmodule ArchivistTest do
@@ -7,7 +7,7 @@ defmodule ArchivistTest do
 
   test "generates a list of article paths" do
     assert ArchivistMock.article_paths() ==
-      ["priv/articles/the_day_the_earth_stood_still.ad"]
+      ["test/support/articles/the_day_the_earth_stood_still.ad"]
   end
 
   test "parses a list of articles" do
