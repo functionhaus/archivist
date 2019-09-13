@@ -31,14 +31,14 @@ defmodule Archivist do
   @doc false
   defmacro __using__(options) do
     quote bind_quoted: [options: options], unquote: true do
-      @defaults %{
+      @defaults [
         content_dir: "priv/articles",
         match_pattern: "**/*.ad",
         content_parser: Earmark,
         article_parser: Arcdown
-      }
+      ]
 
-      @settings Map.merge(@defaults, options)
+      @settings Keyword.merge(@defaults, options)
 
       @before_compile unquote(__MODULE__)
     end
@@ -64,19 +64,19 @@ defmodule Archivist do
       unquote(external_resources)
 
       def articles do
-        unquote Enum.to_list(articles_stream)
+        Enum.to_list unquote(articles_stream)
       end
 
       def topics do
-        unquote parse_attrs(:topics, articles_stream)
+        parse_attrs(:topics, unquote(articles_stream))
       end
 
       def tags do
-        unquote parse_attrs(:tags, articles_stream)
+        parse_attrs(:tags, unquote(articles_stream))
       end
 
       def authors do
-        unquote parse_attrs(:author, articles_stream)
+        parse_attrs(:author, unquote(articles_stream))
       end
     end
   end
@@ -95,7 +95,7 @@ defmodule Archivist do
     end)
   end
 
-  defp parse_attrs(attr, articles_stream) do
+  def parse_attrs(attr, articles_stream) do
     articles_stream
     |> Stream.flat_map(fn article -> article[attr] end)
     |> Stream.reject(&is_nil/1)
