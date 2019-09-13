@@ -61,6 +61,7 @@ defmodule Archivist do
     topics = parse_list(:topics, valid_articles)
     tags = parse_list(:tags, valid_articles)
     authors = parse_attr(:author, valid_articles)
+    slugs = parse_attr(:slug, valid_articles)
 
     external_resources = article_paths
       |> Enum.map(&quote(do: @external_resource unquote(&1)))
@@ -84,6 +85,10 @@ defmodule Archivist do
 
       def authors do
         unquote authors
+      end
+
+      def slugs do
+        unquote slugs
       end
     end
   end

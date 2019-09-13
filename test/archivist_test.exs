@@ -33,4 +33,8 @@ defmodule ArchivistTest do
   test "compiled sorted list of unique tags" do
     assert ArchivistMock.tags() == [:aliens, :horror, :sci_fi, :thrillers]
   end
+
+  test "compiled sorted list of unique slugs" do
+    assert ArchivistMock.slugs() == ["the-day-the-earth-stood-still"]
+  end
 end
