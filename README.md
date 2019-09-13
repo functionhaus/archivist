@@ -48,6 +48,18 @@ your elixir library. For example:
 
 `priv/articles/journey_to_the_center_of_the_earth.ad`
 
+# Todo
+
+The following list of forthcoming features are either in progress or slated for
+development:
+
+* Throw compile-time errors for duplicate slugs
+* Throw compile-time errors for improperly formatted content
+* Add support for using a set of articles written as a series
+* Add generator tasks for creating pre-structured templates for Arcdown files
+* Generate uuid values for arcdown content
+* Add `series_id` uuid references for articles included in series
+
 ## Availability
 
 This library is currently published at for use with the public hex.pm
