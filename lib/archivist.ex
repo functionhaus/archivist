@@ -56,10 +56,11 @@ defmodule Archivist do
 
     article_paths = article_paths(content_dir, match_pattern)
     parsed_articles = parse_articles(article_paths)
+    valid_articles = valid_articles(parsed_articles)
 
-    topics = parse_list(:topics, parsed_articles)
-    tags = parse_list(:tags, parsed_articles)
-    authors = parse_attr(:author, parsed_articles)
+    topics = parse_list(:topics, valid_articles)
+    tags = parse_list(:tags, valid_articles)
+    authors = parse_attr(:author, valid_articles)
 
     external_resources = article_paths
       |> Enum.map(&quote(do: @external_resource unquote(&1)))
@@ -68,7 +69,7 @@ defmodule Archivist do
       unquote(external_resources)
 
       def articles do
-        unquote parsed_articles
+        unquote valid_articles
           |> Enum.to_list
           |> Macro.escape
       end
@@ -95,15 +96,18 @@ defmodule Archivist do
   end
 
   defp parse_articles(article_paths) do
-    Stream.map(article_paths, fn path ->
-      {:ok, parsed} = Arcdown.parse_file(path)
-      parsed
-    end)
+    Stream.map(article_paths, &Arcdown.parse_file(&1))
   end
 
-  # defp parse_articles(article_paths) do
-  #   Stream.map(article_paths, &Arcdown.parse_file(&1))
-  # end
+  defp valid_articles(parsed_articles) do
+    Stream.map(parsed_articles, fn tuple ->
+      case tuple do
+        {:ok, article} -> article
+        _ -> nil
+      end
+    end)
+    |> Stream.reject(&is_nil/1)
+  end
 
   def parse_list(attr, articles) do
     articles
