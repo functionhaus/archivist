@@ -5,6 +5,11 @@ end
 defmodule ArchivistTest do
   use ExUnit.Case, async: false
 
+  test "generates a list of article paths" do
+    assert ArchivistMock.article_paths() ==
+      ["priv/articles/the_day_the_earth_stood_still.ad"]
+  end
+
   test "parses a list of articles" do
     assert ArchivistMock.articles() == [
       %Arcdown.Article{

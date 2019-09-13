@@ -75,6 +75,10 @@ defmodule Archivist do
           |> Macro.escape
       end
 
+      def article_paths do
+        unquote article_paths
+      end
+
       def topics do
         unquote topics
       end
