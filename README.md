@@ -50,25 +50,14 @@ your elixir library. For example:
 
 # Todo
 
-The following list of forthcoming features are either in progress or slated for
-development:
-
-* Throw compile-time errors for duplicate slugs
-* Throw compile-time errors for improperly formatted content
-* Add support for using a set of articles written as a series
-* Add generator tasks for creating pre-structured templates for Arcdown files
-* Generate uuid values for arcdown content
-* Add `series_id` uuid references for articles included in series
+Issues and Todo enhancements are managed at the official
+[Archivist issues tracker](https://github.com/functionhaus/archivist/issues) on GitHub.
 
 ## Availability
 
-This library is currently published at for use with the public hex.pm
-repository at https://hex.pm/packages/archivist.
-
-Source code is available at the [FunctionHaus Github Organization](
-https://github.com/functionhaus) at
-https://github.com/functionhaus/archivist.
-
+Source code is available at the official
+[Archivist repository](https://github.com/functionhaus/arcdown)
+on the [FunctionHaus GitHub Organization](https://github.com/functionhaus)
 
 ## License
 
