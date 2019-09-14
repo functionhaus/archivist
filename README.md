@@ -5,13 +5,14 @@ at compile time from version-controlled markdown files. It is built to
 be used in conjunction with the [Arcdown plaintext article parser library](https://github.com/functionhaus/arcdown).
 
 Archivist is inspired by the general approach of Cẩm Huỳnh's great
-[Nabo](https://github.com/qcam/nabo) library with some key differences.
+[Nabo](https://github.com/qcam/nabo) library with some key differences:
 
-Archivist uses `Arcdown` format by default, allowing for more robust articles
-features, such as:
+* Archivist articles are formatted in `Arcdown` format by default, allowing
+for more robust articles and article features.
 
 * Archivist is an *opinionated* piece of software, meaning it makes decisions
-about how your content should be formatted (Markdown) and parsed (Earmark).
+about how your articles should be structured (Arcdown), how your content should
+be formatted (Markdown).
 
 * Archivist allows articles to be organized into nested *topic* directories for
 better organization. Topic directories do not currently hold any semantic
@@ -24,12 +25,17 @@ it's usually only a sentence or two, and you can do that on your own.
 * Archivist adds default attributes for author names and email addresses, as
 well as sorting content by author.
 
-* Archivist allows you to set a `created_at` and `published_at` timestamps to
-give you greater control over content organization.
+* Archivist exposes its article sorting mechanism as an anonymous function,
+allowing users to implement custom article-sorting strategies at compile-time.
 
-* Archivist allows you to *tag* your articles however you'd like. Later versions
-will allow the user to set compile-time contstraints for tags and topics to
-guarantee that only approved tags and topics are used.
+* Archivist allows you to set a `created_at` and `published_at` timestamps to
+give you greater control over content and how it's used.
+
+* Archivist allows you to *tag* your articles however you'd like.
+
+* Archivist generates lists of tags, topics, and authors at compile-time, giving
+you more flexibility in your content's front-end presentation without having to
+perform additional parsing at runtime.
 
 ## Installation
 
