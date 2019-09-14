@@ -37,6 +37,7 @@ defmodule Archivist.Archive do
       @defaults [
         content_dir: "priv/articles",
         match_pattern: "**/*.ad",
+        article_sorter: &(&1[:published_at] >= &2[:published_at]),
         content_parser: Earmark,
         article_parser: Arcdown
       ]
@@ -55,6 +56,7 @@ defmodule Archivist.Archive do
 
     content_dir = settings[:content_dir]
     match_pattern = settings[:match_pattern]
+    article_sorter = settings[:article_sorter]
 
     article_paths = Parser.get_paths(content_dir, match_pattern)
     parsed_articles = Parser.parse_files(article_paths)
@@ -75,7 +77,7 @@ defmodule Archivist.Archive do
 
       def articles do
         unquote valid_articles
-          |> Enum.to_list
+          |> Enum.sort(article_sorter)
           |> Macro.escape
       end
 

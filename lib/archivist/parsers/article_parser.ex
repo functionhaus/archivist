@@ -23,16 +23,16 @@ defmodule Archivist.ArticleParser do
   def parse_attrs(attr, articles) do
     articles
     |> Stream.flat_map(fn article -> Map.get(article, attr) end)
-    |> sanitize_parsed
+    |> sanitize_attrs
   end
 
   def parse_attr(attr, articles) do
     articles
     |> Stream.map(fn article -> Map.get(article, attr) end)
-    |> sanitize_parsed
+    |> sanitize_attrs
   end
 
-  defp sanitize_parsed(parsed_vals) do
+  defp sanitize_attrs(parsed_vals) do
     parsed_vals
     |> Stream.reject(&is_nil/1)
     |> Stream.uniq
