@@ -155,4 +155,6 @@ on the [FunctionHaus GitHub Organization](https://github.com/functionhaus)
 ## License
 
 Archivist source code is released under Apache 2 License.
-Check LICENSE file for more information. &copy; 2017 FunctionHaus, LLC
+Check LICENSE file for more information.
+
+&copy; 2017 FunctionHaus, LLC
