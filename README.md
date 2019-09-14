@@ -44,7 +44,7 @@ def deps do
 end
 ```
 
-# Usage
+## Usage
 
 The heart of Archivist is the `Archive` module, which acts as a repository for
 exposing query functions for articles, slugs, topics, etc. You can create an
@@ -141,7 +141,7 @@ Future versions of archivist (`0.1.x` and beyond) will likely implement a
 dedicated Archivist.Article struct to store additional archivist-specific
 information about each Article entity.
 
-# Todo
+## Todo
 
 Issues and Todo enhancements are managed at the official
 [Archivist issues tracker](https://github.com/functionhaus/archivist/issues) on GitHub.
