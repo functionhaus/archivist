@@ -6,8 +6,8 @@ defmodule Archivist.ArticleParser do
     |> Path.wildcard
   end
 
-  def parse_files(article_paths) do
-    Stream.map(article_paths, &Arcdown.parse_file(&1))
+  def parse_files(article_paths, parser) do
+    Stream.map(article_paths, &parser.parse_file(&1))
   end
 
   def filter_valid(parsed_articles) do

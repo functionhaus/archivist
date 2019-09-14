@@ -57,9 +57,10 @@ defmodule Archivist.Archive do
     content_dir = settings[:content_dir]
     match_pattern = settings[:match_pattern]
     article_sorter = settings[:article_sorter]
+    article_parser = settings[:article_parser]
 
     article_paths = Parser.get_paths(content_dir, match_pattern)
-    parsed_articles = Parser.parse_files(article_paths)
+    parsed_articles = Parser.parse_files(article_paths, article_parser)
     valid_articles = Parser.filter_valid(parsed_articles)
 
     topics = Parser.parse_attrs(:topics, valid_articles)
