@@ -50,7 +50,6 @@ defmodule Archivist.MixProject do
      files: ["lib", "mix.exs", "README.md"],
      maintainers: ["FunctionHaus LLC, Mike Zazaian"],
      licenses: ["Apache 2"],
-
      links: %{"GitHub" => "https://github.com/functionhaus/archivist",
               "Docs" => "https://hexdocs.pm/archivist/"}
      ]
