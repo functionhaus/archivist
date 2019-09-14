@@ -1,4 +1,4 @@
-# archivist
+# Archivist
 
 Archivist is a straightforward blogging utility for generating article content
 at compile time from version-controlled markdown files. It is built to
@@ -118,8 +118,9 @@ World) is a 1951 American black-and-white science fiction film from 20th Century
 Fox, produced by Julian Blaustein and directed by Robert Wise.
 ```
 
-At the moment articles will be parsed and returned as `Arcdown.Article` structs.
-The parsing output of the above article example would be this:
+`0.0.x` versions of Archivist will parse and return article content as
+`Arcdown.Article` structs. The parsing output of the above article example
+would look like this:
 
 ```elixir
 %Arcdown.Article{
@@ -135,6 +136,10 @@ The parsing output of the above article example would be this:
   topics: ["Films", "Sci-Fi", "Classic"]
 }
 ```
+
+Future versions of archivist (`0.1.x` and beyond) will likely implement a
+dedicated Archivist.Article struct to store additional archivist-specific
+information about each Article entity.
 
 # Todo
 
