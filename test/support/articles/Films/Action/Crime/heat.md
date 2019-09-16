@@ -1,0 +1,27 @@
+Heat <heat>
+by Michael Mann <michael@mann.org>
+
+Filed under: Films > Action > Crime
+
+Created @ 10:24pm on 2/20/1995
+Published @ 4:30am on 4/2/1996
+
+* Modern Classic
+* Action
+* Crime
+*
+
+Summary:
+A modern classic about the fine line between good and evil
+
+---
+
+Heat is a 1995 American neo-noir crime film written, produced, and directed by
+Michael Mann, starring Al Pacino, Robert De Niro, and Val Kilmer. De Niro plays
+Neil McCauley, a seasoned professional at robberies, and Pacino plays Lt.
+Vincent Hanna, an LAPD robbery-homicide detective tracking down Neil's crew
+after a botched heist leaves three security guards dead. The story is based on
+the former Chicago police officer Chuck Adamson's pursuit during the 1960s of a
+criminal named McCauley, after whom De Niro's character is named. Heat is a
+remake by Mann of an unproduced television series he had worked on, the pilot of
+which was released as the TV movie L.A. Takedown in 1991.
