@@ -37,7 +37,7 @@ defmodule Archivist.Archive do
       @defaults [
         content_dir: "priv/articles",
         match_pattern: "**/*.ad",
-        article_sorter: &(&1[:published_at] >= &2[:published_at]),
+        article_sorter: &(Map.get(&1, :published_at) >= Map.get(&2, :published_at)),
         content_parser: Earmark,
         article_parser: Arcdown
       ]
@@ -49,6 +49,7 @@ defmodule Archivist.Archive do
   end
 
   alias Archivist.ArticleParser, as: Parser
+  alias Archivist.Article
 
   @doc false
   defmacro __before_compile__(env) do
@@ -60,13 +61,15 @@ defmodule Archivist.Archive do
     article_parser = settings[:article_parser]
 
     article_paths = Parser.get_paths(content_dir, match_pattern)
-    parsed_articles = Parser.parse_files(article_paths, article_parser)
-    valid_articles = Parser.filter_valid(parsed_articles)
+    articles = Parser.parse_files(article_paths, article_parser)
+      |> Parser.filter_valid
+      |> Stream.map(&Map.from_struct(&1))
+      |> Stream.map(&struct(Article, &1))
 
-    topics = Parser.parse_attrs(:topics, valid_articles)
-    tags = Parser.parse_attrs(:tags, valid_articles)
-    authors = Parser.parse_attr(:author, valid_articles)
-    slugs = Parser.parse_attr(:slug, valid_articles)
+    topics = Parser.parse_attrs(:topics, articles)
+    tags = Parser.parse_attrs(:tags, articles)
+    authors = Parser.parse_attr(:author, articles)
+    slugs = Parser.parse_attr(:slug, articles)
 
     # quote individual article paths as external resources so that they can be
     # tracked later for autoloading, etc.
@@ -77,7 +80,7 @@ defmodule Archivist.Archive do
       unquote(external_resources)
 
       def articles do
-        unquote valid_articles
+        unquote articles
           |> Enum.sort(article_sorter)
           |> Macro.escape
       end
