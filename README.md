@@ -125,11 +125,11 @@ Fox, produced by Julian Blaustein and directed by Robert Wise.
 ```
 
 `0.0.x` versions of Archivist will parse and return article content as
-`Arcdown.Article` structs. The parsing output of the above article example
+`Archivist.Article` structs. The parsing output of the above article example
 would look like this:
 
 ```elixir
-%Arcdown.Article{
+%Archivist.Article{
   author: "Julian Blaustein",
   content: "The Day the Earth Stood Still (a.k.a. Farewell to the Master and Journey to the\nWorld) is a 1951 American black-and-white science fiction film from 20th Century\nFox, produced by Julian Blaustein and directed by Robert Wise.\n",
   created_at: #DateTime<2019-01-20 22:24:00Z>,
@@ -142,10 +142,6 @@ would look like this:
   topics: ["Films", "Sci-Fi", "Classic"]
 }
 ```
-
-Future versions of archivist (`0.1.x` and beyond) will likely implement a
-dedicated Archivist.Article struct to store additional archivist-specific
-information about each Article entity.
 
 ## Todo
 
