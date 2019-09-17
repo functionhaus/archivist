@@ -1,5 +1,7 @@
 defmodule ArchiveMock do
-  use Archivist.Archive, content_dir: "test/support/articles"
+  use Archivist.Archive,
+    content_dir: "test/support/articles",
+    image_dir: "test/support/images"
 end
 
 defmodule ArchiveTest do
@@ -46,6 +48,15 @@ defmodule ArchiveTest do
         title: "Heat",
         topics: ["Films", "Action", "Crime"],
       }
+    ]
+  end
+
+  test "compile list of image paths" do
+    assert ArchiveMock.image_paths() == [
+      "test/support/images/2001.jpg",
+      "test/support/images/big_lebowski.png",
+      "test/support/images/chameleon.jpg",
+      "test/support/images/michael.gif"
     ]
   end
 
