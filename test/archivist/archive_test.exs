@@ -61,15 +61,15 @@ defmodule ArchiveTest do
     assert ArchiveMock.topics() == %{
       "Fiction" => %{
         "Sci-Fi" => %{
-          "Classic" => nil
+          "Classic" => %{}
         },
       },
       "Films" => %{
         "Sci-Fi" => %{
-          "Classic" => nil
+          "Classic" => %{}
         },
         "Action" => %{
-          "Crime" => nil
+          "Crime" => %{}
         }
       }
     }

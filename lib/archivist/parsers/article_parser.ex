@@ -1,4 +1,7 @@
 defmodule Archivist.ArticleParser do
+
+  alias Archivist.MapUtils
+
   def get_paths(content_dir, pattern) do
     content_dir
     |> Path.relative_to_cwd
@@ -42,13 +45,17 @@ defmodule Archivist.ArticleParser do
   def parse_topics(articles) do
     articles
     |> Stream.map(&Map.get(&1, :topics))
-    |> Stream.map(&nest_topics(&1))
-    |> Enum.to_list
+    |> Stream.map(&mapify_topics(&1))
+    |> Enum.reduce(%{}, fn topics_map, acc ->
+      MapUtils.deep_merge(acc, topics_map)
+    end)
   end
 
-  defp nest_topics(topics_list) do
-    topics_list
+  defp mapify_topics(nested_topics) do
+    nested_topics
     |> Enum.reverse
-    |> Enum.reduce([], fn topic, acc -> [topic | [acc]] end)
+    |> Enum.reduce(%{}, fn topic, acc ->
+      Map.put(%{}, topic, acc)
+    end)
   end
 end

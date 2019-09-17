@@ -90,7 +90,7 @@ defmodule Archivist.Archive do
       end
 
       def topics do
-        unquote topics
+        unquote Macro.escape(topics)
       end
 
       def tags do
