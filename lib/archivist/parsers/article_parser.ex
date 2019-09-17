@@ -46,16 +46,12 @@ defmodule Archivist.ArticleParser do
     articles
     |> Stream.map(&Map.get(&1, :topics))
     |> Stream.map(&mapify_topics(&1))
-    |> Enum.reduce(%{}, fn topics_map, acc ->
-      MapUtils.deep_merge(acc, topics_map)
-    end)
+    |> Enum.reduce(%{}, &MapUtils.deep_merge(&2, &1))
   end
 
   defp mapify_topics(nested_topics) do
     nested_topics
     |> Enum.reverse
-    |> Enum.reduce(%{}, fn topic, acc ->
-      Map.put(%{}, topic, acc)
-    end)
+    |> Enum.reduce(%{}, &Map.put(%{}, &1, &2))
   end
 end
