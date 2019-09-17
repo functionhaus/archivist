@@ -75,6 +75,17 @@ defmodule ArchiveTest do
     }
   end
 
+  test "compile a flattened list of all topics and sub-topics" do
+    assert ArchiveMock.topics_list() == [
+      "Action",
+      "Classic",
+      "Crime",
+      "Fiction",
+      "Films",
+      "Sci-Fi"
+    ]
+  end
+
   test "compiled sorted list of unique tags" do
     assert ArchiveMock.tags() == [
       :action,

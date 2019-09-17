@@ -67,6 +67,7 @@ defmodule Archivist.Archive do
       |> Stream.map(&struct(Article, &1))
 
     topics = Parser.parse_topics(articles)
+    topics_list = Parser.parse_attrs(:topics, articles)
     tags = Parser.parse_attrs(:tags, articles)
     authors = Parser.parse_attr(:author, articles)
     slugs = Parser.parse_attr(:slug, articles)
@@ -91,6 +92,10 @@ defmodule Archivist.Archive do
 
       def topics do
         unquote Macro.escape(topics)
+      end
+
+      def topics_list do
+        unquote topics_list
       end
 
       def tags do
