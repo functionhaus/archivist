@@ -22,13 +22,13 @@ defmodule Archivist.ArticleParser do
 
   def parse_attrs(attr, articles) do
     articles
-    |> Stream.flat_map(fn article -> Map.get(article, attr) end)
+    |> Stream.flat_map(&Map.get(&1, attr))
     |> sanitize_attrs
   end
 
   def parse_attr(attr, articles) do
     articles
-    |> Stream.map(fn article -> Map.get(article, attr) end)
+    |> Stream.map(&Map.get(&1, attr))
     |> sanitize_attrs
   end
 
@@ -37,5 +37,18 @@ defmodule Archivist.ArticleParser do
     |> Stream.reject(&is_nil/1)
     |> Stream.uniq
     |> Enum.sort
+  end
+
+  def parse_topics(articles) do
+    articles
+    |> Stream.map(&Map.get(&1, :topics))
+    |> Stream.map(&nest_topics(&1))
+    |> Enum.to_list
+  end
+
+  defp nest_topics(topics_list) do
+    topics_list
+    |> Enum.reverse
+    |> Enum.reduce([], fn topic, acc -> [topic | [acc]] end)
   end
 end

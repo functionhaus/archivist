@@ -66,7 +66,7 @@ defmodule Archivist.Archive do
       |> Stream.map(&Map.from_struct(&1))
       |> Stream.map(&struct(Article, &1))
 
-    topics = Parser.parse_attrs(:topics, articles)
+    topics = Parser.parse_topics(articles)
     tags = Parser.parse_attrs(:tags, articles)
     authors = Parser.parse_attr(:author, articles)
     slugs = Parser.parse_attr(:slug, articles)

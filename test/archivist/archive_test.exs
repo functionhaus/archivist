@@ -57,15 +57,22 @@ defmodule ArchiveTest do
     ]
   end
 
-  test "compile sorted list of unique topics" do
-    assert ArchiveMock.topics() == [
-      "Action",
-      "Classic",
-      "Crime",
-      "Fiction",
-      "Films",
-      "Sci-Fi"
-    ]
+  test "compile hierarchical list of topics" do
+    assert ArchiveMock.topics() == %{
+      "Fiction" => %{
+        "Sci-Fi" => %{
+          "Classic" => nil
+        },
+      },
+      "Films" => %{
+        "Sci-Fi" => %{
+          "Classic" => nil
+        },
+        "Action" => %{
+          "Crime" => nil
+        }
+      }
+    }
   end
 
   test "compiled sorted list of unique tags" do
