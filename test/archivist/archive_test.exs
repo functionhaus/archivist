@@ -127,20 +127,27 @@ defmodule ArchiveTest do
   end
 
   test "remote archive should use priv paths" do
-    assert RemoteArchive.image_paths() == [
-      "priv/archive/images/2001.jpg",
-      "priv/archive/images/big_lebowski.png",
-      "priv/archive/images/chameleon.jpg",
-      "priv/archive/images/michael.gif"
-    ]
+    priv_dir = :code.priv_dir(:archivist)
+
+    expected_paths = [
+      "archive/images/2001.jpg",
+      "archive/images/big_lebowski.png",
+      "archive/images/chameleon.jpg",
+      "archive/images/michael.gif"
+    ] |> Enum.map(&Path.join(priv_dir, &1))
+
+    assert RemoteArchive.image_paths() == expected_paths
   end
 
   test "generates a list of remote article paths" do
-    assert RemoteArchive.article_paths() ==
-      [
-        "priv/archive/articles/Fiction/Sci-Fi/Classic/journey_to_the_center_of_the_earth.md.ad",
-        "priv/archive/articles/Films/Action/Crime/heat.md.ad",
-        "priv/archive/articles/Films/Sci-Fi/Classic/the_day_the_earth_stood_still.ad"
-      ]
+    priv_dir = :code.priv_dir(:archivist)
+
+    expected_paths = [
+      "archive/articles/Fiction/Sci-Fi/Classic/journey_to_the_center_of_the_earth.md.ad",
+      "archive/articles/Films/Action/Crime/heat.md.ad",
+      "archive/articles/Films/Sci-Fi/Classic/the_day_the_earth_stood_still.ad"
+    ] |> Enum.map(&Path.join(priv_dir, &1))
+
+    assert RemoteArchive.article_paths() == expected_paths
   end
 end
