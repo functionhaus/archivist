@@ -2,10 +2,17 @@ defmodule Archivist.ArticleParser do
 
   alias Archivist.MapUtils
 
-  def get_paths(content_dir, pattern) do
-    content_dir
+
+  # if no application is given, then we just want to expand the paths relative
+  # to the
+  def build_paths(archive_dir, subdir, pattern, app) when is_nil(app) do
+    Path.join([archive_dir, subdir, pattern])
     |> Path.relative_to_cwd
-    |> Path.join([pattern])
+    |> Path.wildcard
+  end
+
+  def build_paths(archive_dir, subdir, pattern, app) when is_atom(app) do
+    Path.join([:code.priv_dir(app), archive_dir, subdir, pattern])
     |> Path.wildcard
   end
 
@@ -21,6 +28,12 @@ defmodule Archivist.ArticleParser do
       end
     end)
     |> Stream.reject(&is_nil/1)
+  end
+
+  def convert_structs(parsed_articles, struct_type) do
+    parsed_articles
+    |> Stream.map(&Map.from_struct(&1))
+    |> Stream.map(&struct(struct_type, &1))
   end
 
   def parse_attrs(attr, articles) do

@@ -36,13 +36,15 @@ defmodule Archivist.Archive do
   defmacro __using__(options) do
     quote bind_quoted: [options: options], unquote: true do
       @defaults [
-        content_dir: "priv/articles",
+        archive_dir: "priv/archive",
+        content_dir: "articles",
         content_pattern: "**/*.ad",
-        image_dir: "priv/images",
+        image_dir: "images",
         image_pattern: "**/*.{jpg,gif,png}",
         article_sorter: &(Map.get(&1, :published_at) >= Map.get(&2, :published_at)),
         content_parser: Earmark,
-        article_parser: Arcdown
+        article_parser: Arcdown,
+        application: nil
       ]
 
       @settings Keyword.merge(@defaults, options)
@@ -53,28 +55,26 @@ defmodule Archivist.Archive do
 
   alias Archivist.ArticleParser, as: Parser
   alias Archivist.Article
-  alias Archivist.ImageParser
 
   @doc false
   defmacro __before_compile__(env) do
     settings = Module.get_attribute(env.module, :settings)
 
+    application = settings[:application]
+    archive_dir = settings[:archive_dir]
     content_dir = settings[:content_dir]
     content_pattern = settings[:content_pattern]
-
     image_dir = settings[:image_dir]
     image_pattern = settings[:image_pattern]
-
     article_sorter = settings[:article_sorter]
     article_parser = settings[:article_parser]
 
-    article_paths = Parser.get_paths(content_dir, content_pattern)
+    article_paths = Parser.build_paths(archive_dir, content_dir, content_pattern, application)
+    image_paths = Parser.build_paths(archive_dir, image_dir, image_pattern, application)
+
     articles = Parser.parse_files(article_paths, article_parser)
       |> Parser.filter_valid
-      |> Stream.map(&Map.from_struct(&1))
-      |> Stream.map(&struct(Article, &1))
-
-    image_paths = ImageParser.get_paths(image_dir, image_pattern)
+      |> Parser.convert_structs(Article)
 
     topics = Parser.parse_topics(articles)
     topics_list = Parser.parse_attrs(:topics, articles)

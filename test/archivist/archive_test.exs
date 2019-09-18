@@ -1,23 +1,30 @@
-defmodule ArchiveMock do
+defmodule LocalArchive do
+  use Archivist.Archive, archive_dir: "test/support/archive"
+end
+
+defmodule RemoteArchive do
+  # you would never call archivist in a real-world example, but it's bein used
+  # here to test the resolution relative to the current app's priv directory
+
   use Archivist.Archive,
-    content_dir: "test/support/articles",
-    image_dir: "test/support/images"
+    archive_dir: "archive",
+    application: :archivist
 end
 
 defmodule ArchiveTest do
   use ExUnit.Case, async: false
 
   test "generates a list of article paths" do
-    assert ArchiveMock.article_paths() ==
+    assert LocalArchive.article_paths() ==
       [
-        "test/support/articles/Fiction/Sci-Fi/Classic/journey_to_the_center_of_the_earth.md.ad",
-        "test/support/articles/Films/Action/Crime/heat.md.ad",
-        "test/support/articles/Films/Sci-Fi/Classic/the_day_the_earth_stood_still.ad"
+        "test/support/archive/articles/Fiction/Sci-Fi/Classic/journey_to_the_center_of_the_earth.md.ad",
+        "test/support/archive/articles/Films/Action/Crime/heat.md.ad",
+        "test/support/archive/articles/Films/Sci-Fi/Classic/the_day_the_earth_stood_still.ad"
       ]
   end
 
   test "parses a list of articles" do
-    assert ArchiveMock.articles() == [
+    assert LocalArchive.articles() == [
       %Archivist.Article{
         author: "Jules Verne",
         content: "Journey to the Center of the Earth (French: Voyage au centre de la Terre, also\ntranslated under the titles A Journey to the Centre of the Earth and A Journey\nto the Interior of the Earth) is an 1864 science fiction novel by Jules Verne.\nThe story involves German professor Otto Lidenbrock who believes there are\nvolcanic tubes going toward the centre of the Earth. He, his nephew Axel, and\ntheir guide Hans descend into the Icelandic volcano Snæfellsjökull, encountering\nmany adventures, including prehistoric animals and natural hazards, before\neventually coming to the surface again in southern Italy, at the Stromboli\nvolcano.\n",
@@ -52,16 +59,16 @@ defmodule ArchiveTest do
   end
 
   test "compile list of image paths" do
-    assert ArchiveMock.image_paths() == [
-      "test/support/images/2001.jpg",
-      "test/support/images/big_lebowski.png",
-      "test/support/images/chameleon.jpg",
-      "test/support/images/michael.gif"
+    assert LocalArchive.image_paths() == [
+      "test/support/archive/images/2001.jpg",
+      "test/support/archive/images/big_lebowski.png",
+      "test/support/archive/images/chameleon.jpg",
+      "test/support/archive/images/michael.gif"
     ]
   end
 
   test "compile sorted list of unique authors" do
-    assert ArchiveMock.authors() == [
+    assert LocalArchive.authors() == [
       "Jules Verne",
       "Julian Blaustein",
       "Michael Mann"
@@ -69,7 +76,7 @@ defmodule ArchiveTest do
   end
 
   test "compile hierarchical list of topics" do
-    assert ArchiveMock.topics() == %{
+    assert LocalArchive.topics() == %{
       "Fiction" => %{
         "Sci-Fi" => %{
           "Classic" => %{}
@@ -87,7 +94,7 @@ defmodule ArchiveTest do
   end
 
   test "compile a flattened list of all topics and sub-topics" do
-    assert ArchiveMock.topics_list() == [
+    assert LocalArchive.topics_list() == [
       "Action",
       "Classic",
       "Crime",
@@ -98,7 +105,7 @@ defmodule ArchiveTest do
   end
 
   test "compiled sorted list of unique tags" do
-    assert ArchiveMock.tags() == [
+    assert LocalArchive.tags() == [
       :action,
       :adventure,
       :aliens,
@@ -112,10 +119,28 @@ defmodule ArchiveTest do
   end
 
   test "compiled sorted list of unique slugs" do
-    assert ArchiveMock.slugs() == [
+    assert LocalArchive.slugs() == [
       "heat",
       "journey-to-the-center-of-the-earth",
       "the-day-the-earth-stood-still"
     ]
+  end
+
+  test "remote archive should use priv paths" do
+    assert RemoteArchive.image_paths() == [
+      "priv/archive/images/2001.jpg",
+      "priv/archive/images/big_lebowski.png",
+      "priv/archive/images/chameleon.jpg",
+      "priv/archive/images/michael.gif"
+    ]
+  end
+
+  test "generates a list of remote article paths" do
+    assert RemoteArchive.article_paths() ==
+      [
+        "priv/archive/articles/Fiction/Sci-Fi/Classic/journey_to_the_center_of_the_earth.md.ad",
+        "priv/archive/articles/Films/Action/Crime/heat.md.ad",
+        "priv/archive/articles/Films/Sci-Fi/Classic/the_day_the_earth_stood_still.ad"
+      ]
   end
 end
