@@ -45,7 +45,7 @@ dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:archivist, "~> 0.0"}
+    {:archivist, "~> 0.2"}
   ]
 end
 ```
@@ -71,10 +71,35 @@ Archive.slugs()
 Archive.authors()
 ```
 
-Create your article content directory at `priv/articles` at the root of
-your elixir library.
+Archivist version 0.2.x expects you to create your article content directory at
+`priv/archive/articles` at the root of your elixir library, like this:
 
-`priv/articles/journey_to_the_center_of_the_earth.ad`
+`priv/archive/articles/journey_to_the_center_of_the_earth.ad`
+
+If you'd like to customize any of your archive's behavior, you can define any of
+the following options when it is used in the target archive directory. The values
+shown are the defaults:
+
+```elixir
+defmodule MyApp.Archive
+  use Archivist.Archive
+    archive_dir: "priv/archive",
+    content_dir: "articles",
+    content_pattern: "**/*.ad",
+    image_dir: "images",
+    image_pattern: "**/*.{jpg,gif,png}",
+    article_sorter: &(Map.get(&1, :published_at) >= Map.get(&2, :published_at)),
+    content_parser: Earmark,
+    article_parser: Arcdown,
+    application: nil
+end
+```
+
+The intent of the `application` flag is to be able to define an OTP app as the
+target for the archive, allowing for the archived data to be called from a
+besides the one in which `Archivist.Archive` is used. However, *this
+functionality is currently not working and should not be used until further
+notice in this README.*
 
 Archivist will read any files with the `.ad` extension in your content directory
 or in any of its subdirectories, and parse the content of those files with the
@@ -82,6 +107,12 @@ parser you've selected (Arcdown by default)
 
 If you'd like to store your articles somewhere besides `priv/articles` you can
 assign a custom path to your archive
+
+#### Version 0.1.x
+Archivist version 0.1.x expects you to create your article content directory at
+`priv/articles` at the root of your elixir library, like this:
+
+`priv/articles/journey_to_the_center_of_the_earth.ad`
 
 ## Arcdown
 

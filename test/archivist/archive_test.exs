@@ -12,7 +12,7 @@ defmodule RemoteArchive do
 end
 
 defmodule ArchiveTest do
-  use ExUnit.Case, async: false
+  use ExUnit.Case, async: true
 
   test "generates a list of article paths" do
     assert LocalArchive.article_paths() ==
