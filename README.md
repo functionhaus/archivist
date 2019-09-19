@@ -88,25 +88,22 @@ defmodule MyApp.Archive
     content_pattern: "**/*.ad",
     image_dir: "images",
     image_pattern: "**/*.{jpg,gif,png}",
-    article_sorter: &(Map.get(&1, :published_at) >= Map.get(&2, :published_at)),
-    content_parser: Earmark,
-    article_parser: Arcdown,
-    application: nil
+    article_sorter: &(Map.get(&1, :published_at) >= Map.get(&2, :published_at))
 end
 ```
-
-The intent of the `application` flag is to be able to define an OTP app as the
-target for the archive, allowing for the archived data to be called from a
-besides the one in which `Archivist.Archive` is used. However, *this
-functionality is currently not working and should not be used until further
-notice in this README.*
 
 Archivist will read any files with the `.ad` extension in your content directory
 or in any of its subdirectories, and parse the content of those files with the
 parser you've selected (Arcdown by default)
 
-If you'd like to store your articles somewhere besides `priv/articles` you can
-assign a custom path to your archive
+If you'd like to store your archive somewhere besides `priv/archive` you can
+assign a custom path to your archive like this:
+
+```elixir
+defmodule MyApp.Archive
+  use Archivist.Archive, archive_dir: "assets/images",
+end
+```
 
 #### Usage notes for Version 0.1.x
 Archivist version 0.1.x expects you to create your article content directory at
@@ -123,9 +120,7 @@ defmodule MyApp.Archive
     content_pattern: "**/*.ad",
     image_dir: "priv/images",
     image_pattern: "**/*.{jpg,gif,png}",
-    article_sorter: &(Map.get(&1, :published_at) >= Map.get(&2, :published_at)),
-    content_parser: Earmark,
-    article_parser: Arcdown
+    article_sorter: &(Map.get(&1, :published_at) >= Map.get(&2, :published_at))
 ```
 
 ## Arcdown
@@ -169,7 +164,7 @@ World) is a 1951 American black-and-white science fiction film from 20th Century
 Fox, produced by Julian Blaustein and directed by Robert Wise.
 ```
 
-`0.0.x` versions of Archivist will parse and return article content as
+`0.1.x` versions of Archivist will parse and return article content as
 `Archivist.Article` structs. The parsing output of the above article example
 would look like this:
 
@@ -187,6 +182,44 @@ would look like this:
   topics: ["Films", "Sci-Fi", "Classic"]
 }
 ```
+
+## Development Notes
+
+A quick review of the `Archivist.Archive` implementation would reveal additional
+options that aren't otherwise mentioned in this README:
+
+```elixir
+defmodule MyApp.Archive
+  use Archivist.Archive
+    content_parser: Earmark,
+    article_parser: Arcdown,
+    application: nil
+end
+```
+
+These options are currently placeholders for future functionality but do not
+serve any purpose to the user for the time being. Some notes on forthcoming
+features:
+
+* While `Earmark` is included with Archivist, functionality for parsing content
+as Earmark has not yet been added. Future versions (like 0.3.x) will add
+something like a `parsed_content` attribute to the parsed articles flag, which
+will contain content parsed as Earmark. Setting this value to `nil` will cause
+the article parser not to parse the content at compile-time.
+
+* The intent of the `application` flag is to be able to define an OTP app as the
+target for the archive, allowing for the archived data to be called from a
+besides the one in which `Archivist.Archive` is used. **Please note that this
+functionality is currently not working and should not be used until further
+notice in this README.**
+
+* Also note that that swapping out the content and article parsers
+with different modules currently is not supported. `ContentParser` and
+`ArticleParser` behaviors will be implemented in future versions (likely 0.3.x)
+and will support implementing custom parsers for these elements.
+
+Please find additional information about known issues and planned features for
+Archivist in the [issues tracker](https://github.com/functionhaus/archivist/issues).
 
 ## Todo
 
