@@ -33,6 +33,9 @@ functions for sorting and collecting all tags used across your archive.
 you more flexibility in your content's front-end presentation without having to
 perform additional parsing at runtime.
 
+* Archivist allows you to store image files and parse and reference the paths to
+those files within your archive at `archive/images`
+
 ## Installation
 
 The package can be installed by adding `archivist` to your list of
@@ -61,10 +64,19 @@ end
 alias MyApp.Archive
 
 Archive.articles()
-Archive.topics()
+Archive.topics() # hierarchical topics
+Archive.topics_list() # flattened topics and sub-topics
 Archive.tags()
 Archive.slugs()
 Archive.authors()
+```
+
+Additionally Archvist exposes helpers for reading paths for articles and
+image files:
+
+```
+Archive.article_paths()
+Archive.image_paths()
 ```
 
 Archivist version 0.2.x expects you to create your article content directory at
