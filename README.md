@@ -108,11 +108,25 @@ parser you've selected (Arcdown by default)
 If you'd like to store your articles somewhere besides `priv/articles` you can
 assign a custom path to your archive
 
-#### Version 0.1.x
+#### Usage notes for Version 0.1.x
 Archivist version 0.1.x expects you to create your article content directory at
 `priv/articles` at the root of your elixir library, like this:
 
 `priv/articles/journey_to_the_center_of_the_earth.ad`
+
+The following options are availble in Version 0.1.x. Values shown are defaults:
+
+```elixir
+defmodule MyApp.Archive
+  use Archivist.Archive
+    content_dir: "priv/articles",
+    content_pattern: "**/*.ad",
+    image_dir: "priv/images",
+    image_pattern: "**/*.{jpg,gif,png}",
+    article_sorter: &(Map.get(&1, :published_at) >= Map.get(&2, :published_at)),
+    content_parser: Earmark,
+    article_parser: Arcdown
+```
 
 ## Arcdown
 
