@@ -1,7 +1,7 @@
 # Archivist
 
 Archivist is a straightforward blogging utility for generating article content
-at compile time from version-controlled markdown files. It is built to
+at compile time from version-controlled article and image files. It is built to
 be used in conjunction with the [Arcdown plaintext article parser library](https://github.com/functionhaus/arcdown).
 
 Archivist is inspired by the general approach of Cẩm Huỳnh's great
@@ -10,17 +10,12 @@ Archivist is inspired by the general approach of Cẩm Huỳnh's great
 * Archivist articles are formatted in `Arcdown` format by default, allowing
 for more robust articles and article features.
 
-* Archivist is an *opinionated* piece of software, meaning it makes decisions
-about how your articles should be structured (Arcdown), how your content should
-be formatted (Markdown).
-
 * Archivist allows articles to be organized into nested *topic* directories for
-better organization. Topic directories do not currently hold any semantic
-meaning, but in the future may be used to optionally infer topic assignment for
-articles within those directories.
+better organization. Topic directory and sub-directory naming will be translated
+into a hierarchical system-wide topic and sub-topic structure.
 
-* Archivist doesn't bother parsing your article summary as markdown because
-it's usually only a sentence or two, and you can do that on your own.
+* Archivist currently doesn't parse article content as markdown, but will add
+optional content parsing in future versions (like 0.3.x).
 
 * Archivist adds default attributes for author names and email addresses, as
 well as sorting content by author.
@@ -31,7 +26,8 @@ allowing users to implement custom article-sorting strategies at compile-time.
 * Archivist allows you to set a `created_at` and `published_at` timestamps to
 give you greater control over content and how it's used.
 
-* Archivist allows you to *tag* your articles however you'd like.
+* Archivist allows you to *tag* your articles however you'd like, and provides
+functions for sorting and collecting all tags used across your archive.
 
 * Archivist generates lists of tags, topics, and authors at compile-time, giving
 you more flexibility in your content's front-end presentation without having to
