@@ -1,7 +1,7 @@
 defmodule Archivist.MixProject do
   use Mix.Project
 
-  @version "0.2.0"
+  @version "0.2.1"
   @description "Plain-text, version-controlled blogging in Arcdown and Markdown."
 
   def project do
