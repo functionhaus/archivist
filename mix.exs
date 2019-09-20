@@ -1,7 +1,7 @@
 defmodule Archivist.MixProject do
   use Mix.Project
 
-  @version "0.2.3"
+  @version "0.2.4"
   @description "Plain-text, version-controlled blogging in Arcdown and Markdown."
 
   def project do
@@ -47,7 +47,7 @@ defmodule Archivist.MixProject do
 
   defp package do
     [
-     files: ["lib", "mix.exs", "README.md"],
+     files: ["lib", "mix.exs", "README.md", "LICENSE.txt"],
      maintainers: ["FunctionHaus LLC, Mike Zazaian"],
      licenses: ["Apache 2"],
      links: %{"GitHub" => "https://github.com/functionhaus/archivist",
