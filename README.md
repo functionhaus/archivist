@@ -14,6 +14,10 @@ for more robust articles and article features.
 better organization. Topic directory and sub-directory naming will be translated
 into a hierarchical system-wide topic and sub-topic structure.
 
+* Archivist encourages the use of an "intermediate library pattern", where
+content and articles are stored in a dedicated library in order to reduce
+content-related git clutter in your primary application repository.
+
 * Archivist currently doesn't parse article content as markdown, but will add
 optional content parsing in future versions (like 0.3.x).
 
@@ -74,7 +78,7 @@ Archive.authors()
 Additionally Archvist exposes helpers for reading paths for articles and
 image files:
 
-```
+```elixir
 Archive.article_paths()
 Archive.image_paths()
 ```
@@ -109,7 +113,7 @@ assign a custom path to your archive like this:
 
 ```elixir
 defmodule MyApp.Archive
-  use Archivist.Archive, archive_dir: "assets/images",
+  use Archivist.Archive, archive_dir: "assets/archive",
 end
 ```
 
@@ -172,8 +176,8 @@ World) is a 1951 American black-and-white science fiction film from 20th Century
 Fox, produced by Julian Blaustein and directed by Robert Wise.
 ```
 
-`0.1.x` versions of Archivist will parse and return article content as
-`Archivist.Article` structs. The parsing output of the above article example
+`0.2.x` and `0.1.x` versions of Archivist will parse and return article content
+as `Archivist.Article` structs. The parsing output of the above article example
 would look like this:
 
 ```elixir
@@ -190,6 +194,111 @@ would look like this:
   topics: ["Films", "Sci-Fi", "Classic"]
 }
 ```
+## Intermediate Library Pattern
+
+While it's completely acceptable use Archivist.Archive within the same
+application in which the content archive is located, sites with lots of content
+and publishers who commit changes frequently will quickly find the git
+history for their application littered with content-related commits that have
+nothing to do with the broader functionality of the application itself.
+
+To remedy this issue, Archivist permits and encourages the use of an
+intermediate library to house the content archive (`myapp_blog` for example),
+and then to include that intermediate library in the target application where
+the content is being used and displayed.
+
+This approach requires you generate a new mix library with `mix new myapp_blog`,
+and then to publish that repository so that it's available to other Elixir and
+Erlang applications, via hex.pm or hex.pm organizations for example.
+
+The preferred way to implement this approach is to include `archivist` as a
+dependency in your intermediate library (rather than in your application), and
+then to create a new Archive in your intermediate library like this:
+
+```elixir
+defmodule MyappBlog.Archive do
+  use Archivist.Archive,
+    application: :myapp_blog,
+    archive_dir: "archive"
+end
+```
+
+Note that this approach requires you to add the name of your otp application in
+the `application` flag when your archive is defined. Also note that `archive_dir`
+is compressed to just `archive` instead of `priv/archive` since this approach
+automatically assumes that content will be stored in the `priv` directory of the
+otp app indicated by the `application` option.
+
+Here is an example of an excerpt from the mixfile of an intermediate library:
+
+```elixir
+  defp deps do
+    [
+      {:archivist, "~> 0.2"},
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
+    ]
+  end
+
+  defp package do
+    [
+     files: ["lib", "priv", "mix.exs", "README.md"],
+     organization: "my_hex_org"
+    ]
+  end
+```
+
+Requiring the priv dir here is essential to ensuring that the content archive is
+packaged with the hex release, and is then made available for the target
+application.
+
+Setting the organization here scopes the published package to a hex
+organization, thus ensuring that it remains private.
+
+Then in the application where your content is being used, be sure to include the
+intermediate library as a dependency:
+
+```elixir
+defp deps do
+  [
+    ...
+    {:myapp_blog, "~> 0.1", organization: "my_hex_org"}
+  ]
+end
+```
+
+And then you should be able to use your content directly in your application:
+
+```elixir
+MyappBlog.Archive.articles()
+MyappBlog.Archive.topics()
+```
+
+## Mounting Images with Plug
+
+If you choose to store images with your archive, it's probably most useful to
+have that content mounted as a static assets path somewhere where the content
+can be digested with Webpack or whichever assets manager you're using.
+
+For systems built with Plug (including Phoenix), it's easy enough to mount the
+images path with `Plug.Static` at the path of your choice. Simply call the name
+of the otp app where your content is stored along with the path to the images:
+
+```elixir
+plug Plug.Static,
+  at: "/blog/images/",
+  from: {:myapp_blog, "priv/archive/images"}
+```
+
+Note that for applications that employed the Intermediate Library Pattern, the
+flags for `Plug.Static` will look like the example above. For instances where
+Archivist is being used directly in the target application, the name of the
+current application should be used here, like this:
+
+```elixir
+plug Plug.Static,
+  at: "/blog/images/",
+  from: {:myapp, "priv/archive/images"}
+```
 
 ## Development Notes
 
@@ -200,8 +309,7 @@ options that aren't otherwise mentioned in this README:
 defmodule MyApp.Archive
   use Archivist.Archive
     content_parser: Earmark,
-    article_parser: Arcdown,
-    application: nil
+    article_parser: Arcdown
 end
 ```
 
@@ -214,12 +322,6 @@ as Earmark has not yet been added. Future versions (like 0.3.x) will add
 something like a `parsed_content` attribute to the parsed articles flag, which
 will contain content parsed as Earmark. Setting this value to `nil` will cause
 the article parser not to parse the content at compile-time.
-
-* The intent of the `application` flag is to be able to define an OTP app as the
-target for the archive, allowing for the archived data to be called from a
-besides the one in which `Archivist.Archive` is used. **Please note that this
-functionality is currently not working and should not be used until further
-notice in this README.**
 
 * Also note that that swapping out the content and article parsers
 with different modules currently is not supported. `ContentParser` and
