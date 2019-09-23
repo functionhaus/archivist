@@ -1,5 +1,7 @@
 # Archivist
 
+[![CircleCI](https://circleci.com/gh/functionhaus/archivist.svg?style=svg)](https://circleci.com/gh/functionhaus/archivist)
+
 Archivist is a straightforward blogging utility for generating article content
 at compile time from version-controlled article and image files. It is built to
 be used in conjunction with the [Arcdown plaintext article parser library](https://github.com/functionhaus/arcdown).
