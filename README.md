@@ -40,9 +40,13 @@ functions for sorting and collecting all tags used across your archive.
 you more flexibility in your content's front-end presentation without having to
 perform additional parsing at runtime.
 
-* Archivist allows you to set constrained lists of `valid_topics` and
-`valid_tags`, and will throw warnings during compilation if tags and topics are
-used that do not appear in those lists.
+* Archivist allows you to set constrained lists of `valid_topics`, `valid_tags`,
+and `valid_authors`, and will throw warnings during compilation if tags and topics
+are used that do not appear in those lists.
+
+* Archivist enforces the uniqueness of article slugs by default and will throw
+compile-time warnings if slugs are duplicated across article content. This
+behavior can be turned off with the `slug_warnings` option.
 
 * Archivist allows you to store image files and parse and reference the paths to
 those files within your archive at `archive/images`
@@ -108,9 +112,11 @@ defmodule MyApp.Archive
     image_dir: "images",
     image_pattern: "**/*.{jpg,gif,png}",
     article_sorter: &(Map.get(&1, :published_at) >= Map.get(&2, :published_at)),
+    slug_warnings: true,
     application: nil,
     valid_tags: nil,
-    valid_topics: nil
+    valid_topics: nil,
+    valid_authors: nil,
 end
 ```
 
@@ -265,10 +271,10 @@ MyappBlog.Archive.articles()
 MyappBlog.Archive.topics()
 ```
 
-## Topics and Tags Constraints
+## Parsed Content Constraints
 
 As of Archivist version `0.2.6` archives can receive flags for lists of
-`valid_topics` and `valid_tags` like this:
+`valid_topics`, `valid_tags` and `valid_authors`, like this:
 
 ```elixir
 defmodule Myapp.Archive do
@@ -291,13 +297,18 @@ defmodule Myapp.Archive do
       :modern_classic,
       :sci_fi,
       :thrillers
+    ],
+    valid_authors: [
+      "Jules Verne",
+      "Julian Blaustein",
+      "Michael Mann"
     ]
 end
 ```
 
-Adding articles with tags or topics that don't conform to these lists, or using
-a topic directory structure that doesn't conform to these lists will throw
-warnings at compile time, like this:
+Adding articles with tags, topics or authors that don't conform to these lists,
+or using a topic directory structure that doesn't conform to these lists will
+throw warnings at compile time, like this:
 
 ```elixir
 warning: Archivist Archive contains invalid topics: Action, Classic
@@ -305,20 +316,38 @@ warning: Archivist Archive contains invalid topics: Action, Classic
 
 warning: Archivist Archive contains invalid tags: action, adventure
   (archivist) lib/archivist/parsers/article_parser.ex:77: Archivist.ArticleParser.warn_invalid/3
+
+warning: Archivist Archive contains invalid authors: Ernest Hemingway
+  (archivist) lib/archivist/parsers/article_parser.ex:77: Archivist.ArticleParser.warn_invalid/3
 ```
 
 Compilation will not cease, however, simply because these constraints are
 being violated.
 
-Please note that only exact topic matches are accounted for here, so`"Sci-Fi"`
-will not be considered equivalent to `"SciFi"` and will throw a warning.
+Please note that only exact topic and author matches are accounted for here,
+so`"Sci-Fi"` will not be considered equivalent to `"SciFi"` and will throw a
+warning. Similarly, "J.D. Salinger" will not be considered to be the same
+author as "JD Salinger" by the article parser.
 
-If you do not want warnings for tags or topics during compilation simply don't
-declare any values for `valid_topics` or `valid_tags` and they'll be ignored.
+If you do not want warnings for tags, topics or authors during compilation
+simply don't declare any values for `valid_topics`, `valid_tags`, or
+`valid_authors` depending on your desired outcomes, and they'll be ignored.
 
 Also note that enforcement of valid topics currently is only compared to the
 flattened list of topics and sub-topics. There is no functionality in place
 at the moment for constraining specific topic hierarchies.
+
+It should additionally be noted that the `slug_warnings` filter is on by
+default, meaning that the parser will throw warnings if duplicate slugs are
+found across articles in your content archive. This can be turned off by
+setting `slug_warnings: false` when you declare your archive, like this:
+
+
+```elixir
+defmodule Myapp.Archive do
+  use Archivist, slug_warnings: false
+end
+```
 
 ## Mounting Images with Plug
 
