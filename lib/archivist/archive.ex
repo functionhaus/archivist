@@ -44,7 +44,9 @@ defmodule Archivist.Archive do
         article_sorter: &(Map.get(&1, :published_at) >= Map.get(&2, :published_at)),
         content_parser: Earmark,
         article_parser: Arcdown,
-        application: nil
+        application: nil,
+        valid_tags: nil,
+        valid_topics: nil
       ]
 
       @settings Keyword.merge(@defaults, options)
@@ -68,6 +70,8 @@ defmodule Archivist.Archive do
     image_pattern = settings[:image_pattern]
     article_sorter = settings[:article_sorter]
     article_parser = settings[:article_parser]
+    valid_topics = settings[:valid_topics]
+    valid_tags = settings[:valid_tags]
 
     article_paths = Parser.build_paths(archive_dir, content_dir, content_pattern, application)
     image_paths = Parser.build_paths(archive_dir, image_dir, image_pattern, application)
@@ -76,9 +80,9 @@ defmodule Archivist.Archive do
       |> Parser.filter_valid
       |> Parser.convert_structs(Article)
 
+    topics_list = Parser.parse_topics_list(articles, valid_topics)
     topics = Parser.parse_topics(articles)
-    topics_list = Parser.parse_attrs(:topics, articles)
-    tags = Parser.parse_attrs(:tags, articles)
+    tags = Parser.parse_tags(articles, valid_tags)
     authors = Parser.parse_attr(:author, articles)
     slugs = Parser.parse_attr(:slug, articles)
 

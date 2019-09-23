@@ -273,6 +273,61 @@ MyappBlog.Archive.articles()
 MyappBlog.Archive.topics()
 ```
 
+## Valid Topics and Tags Constraints
+
+As of Archivist version `0.2.6` archives can receive flags for lists of
+`valid_topics` and `valid_tags` like this:
+
+```elixir
+defmodule Myapp.Archive do
+  use Archivist,
+    valid_topics: [
+      "Action",
+      "Classic",
+      "Crime",
+      "Fiction",
+      "Films",
+      "Sci-Fi"
+    ],
+    valid_tags: [
+      :action,
+      :adventure,
+      :aliens,
+      :crime,
+      :horror,
+      :literature,
+      :modern_classic,
+      :sci_fi,
+      :thrillers
+    ]
+end
+```
+
+Adding articles with tags or topics that don't conform to these lists, or using
+a topic directory structure that doesn't conform to these lists will throw
+warnings at compile time, like this:
+
+```
+warning: Archivist Archive contains invalid topics: Action, Classic
+  (archivist) lib/archivist/parsers/article_parser.ex:77: Archivist.ArticleParser.warn_invalid/3
+
+warning: Archivist Archive contains invalid tags: action, adventure
+  (archivist) lib/archivist/parsers/article_parser.ex:77: Archivist.ArticleParser.warn_invalid/3
+```
+
+Compilation will not cease, however, simply because these constraints are
+being violated.
+
+Please note that only exact topic matches are accounted for here, so`"Sci-Fi"`
+will not be considered equivalent to `"SciFi"` and will throw a warning.
+
+If you do not want warnings for tags or topics during compilation simply don't
+declare any values for `valid_topics` or `valid_tags` and they'll be ignored.
+
+Also note that enforcement of valid topics currently is only compared to the
+flattened list of topics and sub-topics. There is no functionality in place
+at the moment for constraining specific topic hierarchies.
+
 ## Mounting Images with Plug
 
 If you choose to store images with your archive, it's probably most useful to

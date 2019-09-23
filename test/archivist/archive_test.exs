@@ -1,5 +1,26 @@
 defmodule LocalArchive do
-  use Archivist.Archive, archive_dir: "test/support/archive"
+  use Archivist.Archive,
+    archive_dir: "test/support/archive",
+    valid_topics: [
+      "Action",
+      "Classic",
+      "Crime",
+      "Fiction",
+      "Films",
+      "Sci-Fi"
+    ],
+    valid_tags: [
+      :action,
+      :adventure,
+      :aliens,
+      :crime,
+      :horror,
+      :literature,
+      :modern_classic,
+      :sci_fi,
+      :thrillers
+    ]
+
 end
 
 defmodule RemoteArchive do
@@ -8,7 +29,26 @@ defmodule RemoteArchive do
 
   use Archivist.Archive,
     archive_dir: "archive",
-    application: :archivist
+    application: :archivist,
+    valid_topics: [
+      "Action",
+      "Classic",
+      "Crime",
+      "Fiction",
+      "Films",
+      "Sci-Fi"
+    ],
+    valid_tags: [
+      :action,
+      :adventure,
+      :aliens,
+      :crime,
+      :horror,
+      :literature,
+      :modern_classic,
+      :sci_fi,
+      :thrillers
+    ]
 end
 
 defmodule ArchiveTest do

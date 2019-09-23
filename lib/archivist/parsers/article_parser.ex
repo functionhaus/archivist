@@ -55,6 +55,32 @@ defmodule Archivist.ArticleParser do
     |> Enum.sort
   end
 
+  def parse_topics_list(articles, valid_topics) do
+    parse_attrs(:topics, articles)
+    |> warn_invalid(valid_topics, :topics)
+  end
+
+  def parse_tags(articles, valid_tags) do
+    parse_attrs(:tags, articles)
+    |> warn_invalid(valid_tags, :tags)
+  end
+
+  defp warn_invalid(parsed_items, valid_items, attr_name) do
+    if valid_items do
+      invalid_items = Enum.filter(parsed_items, fn item ->
+        !Enum.member?(valid_items, item)
+      end)
+
+      if Enum.count(invalid_items) > 0 do
+        joined_items = Enum.join(invalid_items, ", ")
+        "Archivist Archive contains invalid #{attr_name}: #{joined_items}"
+        |> IO.warn(Macro.Env.stacktrace(__ENV__))
+      end
+    end
+
+    parsed_items
+  end
+
   def parse_topics(articles) do
     articles
     |> Stream.map(&Map.get(&1, :topics))
