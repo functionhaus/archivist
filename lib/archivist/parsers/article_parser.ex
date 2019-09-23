@@ -71,7 +71,10 @@ defmodule Archivist.ArticleParser do
   end
 
   def parse_slugs(articles, slug_warnings) do
-    parse_attr(:slug, articles)
+    articles
+    |> Stream.map(&Map.get(&1, :slug))
+    |> Stream.reject(&is_nil/1)
+    |> Enum.sort
     |> warn_duplicate(slug_warnings, :slugs)
   end
 
