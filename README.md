@@ -37,6 +37,10 @@ functions for sorting and collecting all tags used across your archive.
 you more flexibility in your content's front-end presentation without having to
 perform additional parsing at runtime.
 
+* Archivist allows you to set constrained lists of `valid_topics` and
+`valid_tags`, and will throw warnings during complication if tags and topics are
+used that do not appear in those lists.
+
 * Archivist allows you to store image files and parse and reference the paths to
 those files within your archive at `archive/images`
 
@@ -273,7 +277,7 @@ MyappBlog.Archive.articles()
 MyappBlog.Archive.topics()
 ```
 
-## Valid Topics and Tags Constraints
+## Topics and Tags Constraints
 
 As of Archivist version `0.2.6` archives can receive flags for lists of
 `valid_topics` and `valid_tags` like this:
@@ -353,6 +357,28 @@ current application should be used here, like this:
 plug Plug.Static,
   at: "/blog/images/",
   from: {:myapp, "priv/archive/images"}
+```
+
+For use within Phoenix in particular, your plug declaration would likely go in
+the `MyappWeb.Endpoint` module, like this:
+
+```elixir
+defmodule MyappWeb.Endpoint do
+  use Phoenix.Endpoint, otp_app: :myapp
+
+  socket "/socket", MyappWeb.UserSocket,
+    websocket: true,
+    longpoll: false
+
+  plug Plug.Static,
+    at: "/",
+    from: :myapp,
+    gzip: false,
+    only: ~w(css fonts images js favicon.ico robots.txt)
+
+  plug Plug.Static,
+    at: "/blog/images/",
+    from: {:myapp_blog, "priv/archive/images"}
 ```
 
 ## Development Notes
