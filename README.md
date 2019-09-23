@@ -299,7 +299,7 @@ Adding articles with tags or topics that don't conform to these lists, or using
 a topic directory structure that doesn't conform to these lists will throw
 warnings at compile time, like this:
 
-```
+```elixir
 warning: Archivist Archive contains invalid topics: Action, Classic
   (archivist) lib/archivist/parsers/article_parser.ex:77: Archivist.ArticleParser.warn_invalid/3
 
