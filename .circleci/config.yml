@@ -1,0 +1,58 @@
+# Elixir CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-elixir/ for more details
+version: 2
+jobs:
+  build:
+    docker:
+      # specify the version here
+      - image: circleci/elixir:1.9
+        environment:
+          MIX_ENV: test
+
+    working_directory: ~/archivist
+    steps:
+      - checkout
+
+      ## Mix Config
+
+      # specify any bash command here prefixed with `run: `
+      - run: mix local.hex --force
+      - run: mix local.rebar --force
+
+      # load mix deps from cache if they exist and nothing changed
+      # load node modules from cache if nothing changed
+      - restore_cache:
+          keys:
+            - mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
+            - mix-cache-{{ .Branch }}
+            - mix-cache
+
+      # fetch dependencies
+      - run: mix deps.get
+
+      # save cache changes for future runs
+      - save_cache:
+          key: mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
+          paths:
+            - ./_build
+            - db
+            - deps
+            - ./*.ez
+      - save_cache:
+          key: mix-cache-{{ .Branch }}
+          paths:
+            - ./_build
+            - db
+            - deps
+            - ./*.ez
+      - save_cache:
+          key: mix-cache
+          paths:
+            - ./_build
+            - db
+            - deps
+            - ./*.ez
+
+      # run the tests
+      - run: mix test
