@@ -1,69 +1,12 @@
-defmodule LocalArchive do
-  use Archivist.Archive,
-    archive_dir: "test/support/archive",
-    valid_topics: [
-      "Action",
-      "Classic",
-      "Crime",
-      "Fiction",
-      "Films",
-      "Sci-Fi"
-    ],
-    valid_tags: [
-      :action,
-      :adventure,
-      :aliens,
-      :crime,
-      :horror,
-      :literature,
-      :modern_classic,
-      :sci_fi,
-      :thrillers
-    ],
-    valid_authors: [
-      "Jules Verne",
-      "Julian Blaustein",
-      "Michael Mann"
-    ]
-end
-
-defmodule RemoteArchive do
-  # you would never call archivist in a real-world example, but it's bein used
-  # here to test the resolution relative to the current app's priv directory
-
-  use Archivist.Archive,
-    archive_dir: "archive",
-    application: :archivist,
-    valid_topics: [
-      "Action",
-      "Classic",
-      "Crime",
-      "Fiction",
-      "Films",
-      "Sci-Fi"
-    ],
-    valid_tags: [
-      :action,
-      :adventure,
-      :aliens,
-      :crime,
-      :horror,
-      :literature,
-      :modern_classic,
-      :sci_fi,
-      :thrillers
-    ]
-end
-
-defmodule ArchiveTest do
+defmodule LocalArchiveTest do
   use ExUnit.Case, async: true
 
   test "generates a list of article paths" do
     assert LocalArchive.article_paths() ==
       [
-        "test/support/archive/articles/Fiction/Sci-Fi/Classic/journey_to_the_center_of_the_earth.md.ad",
-        "test/support/archive/articles/Films/Action/Crime/heat.md.ad",
-        "test/support/archive/articles/Films/Sci-Fi/Classic/the_day_the_earth_stood_still.ad"
+        "test/support/archives/local/articles/Fiction/Sci-Fi/Classic/journey_to_the_center_of_the_earth.md.ad",
+        "test/support/archives/local/articles/Films/Action/Crime/heat.md.ad",
+        "test/support/archives/local/articles/Films/Sci-Fi/Classic/the_day_the_earth_stood_still.ad"
       ]
   end
 
@@ -104,10 +47,10 @@ defmodule ArchiveTest do
 
   test "compile list of image paths" do
     assert LocalArchive.image_paths() == [
-      "test/support/archive/images/2001.jpg",
-      "test/support/archive/images/big_lebowski.png",
-      "test/support/archive/images/chameleon.jpg",
-      "test/support/archive/images/michael.gif"
+      "test/support/archives/local/images/2001.jpg",
+      "test/support/archives/local/images/big_lebowski.png",
+      "test/support/archives/local/images/chameleon.jpg",
+      "test/support/archives/local/images/michael.gif"
     ]
   end
 
@@ -168,30 +111,5 @@ defmodule ArchiveTest do
       "journey-to-the-center-of-the-earth",
       "the-day-the-earth-stood-still"
     ]
-  end
-
-  test "remote archive should use priv paths" do
-    priv_dir = :code.priv_dir(:archivist)
-
-    expected_paths = [
-      "archive/images/2001.jpg",
-      "archive/images/big_lebowski.png",
-      "archive/images/chameleon.jpg",
-      "archive/images/michael.gif"
-    ] |> Enum.map(&Path.join(priv_dir, &1))
-
-    assert RemoteArchive.image_paths() == expected_paths
-  end
-
-  test "generates a list of remote article paths" do
-    priv_dir = :code.priv_dir(:archivist)
-
-    expected_paths = [
-      "archive/articles/Fiction/Sci-Fi/Classic/journey_to_the_center_of_the_earth.md.ad",
-      "archive/articles/Films/Action/Crime/heat.md.ad",
-      "archive/articles/Films/Sci-Fi/Classic/the_day_the_earth_stood_still.ad"
-    ] |> Enum.map(&Path.join(priv_dir, &1))
-
-    assert RemoteArchive.article_paths() == expected_paths
   end
 end
