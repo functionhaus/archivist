@@ -14,9 +14,10 @@ for more robust articles and article features.
 better organization. Topic directory and sub-directory naming will be translated
 into a hierarchical system-wide topic and sub-topic structure.
 
-* Archivist encourages the use of an "intermediate library pattern", where
-content and articles are stored in a dedicated library in order to reduce
-content-related git clutter in your primary application repository.
+* Archivist supports the use of an "intermediate library pattern", where
+content and articles are stored in a dedicated library and seperate repository
+in order to reduce content-related git clutter in your primary application
+repo.
 
 * Archivist currently doesn't parse article content as markdown, but will add
 optional content parsing in future versions (like 0.3.x).
@@ -25,7 +26,7 @@ optional content parsing in future versions (like 0.3.x).
 well as sorting content by author.
 
 * Archivist exposes its article sorting mechanism as an anonymous function,
-allowing users to implement custom article-sorting strategies at compile-time.
+allowing you to implement custom article-sorting strategies at compile-time.
 
 * Archivist allows you to set a `created_at` and `published_at` timestamps to
 give you greater control over content and how it's used.
@@ -38,7 +39,7 @@ you more flexibility in your content's front-end presentation without having to
 perform additional parsing at runtime.
 
 * Archivist allows you to set constrained lists of `valid_topics` and
-`valid_tags`, and will throw warnings during complication if tags and topics are
+`valid_tags`, and will throw warnings during compilation if tags and topics are
 used that do not appear in those lists.
 
 * Archivist allows you to store image files and parse and reference the paths to
@@ -87,7 +88,7 @@ Archive.article_paths()
 Archive.image_paths()
 ```
 
-Archivist version 0.2.x expects you to create your article content directory at
+Archivist 0.2.x versions expect you to create your article content directory at
 `priv/archive/articles` at the root of your elixir library, like this:
 
 `priv/archive/articles/journey_to_the_center_of_the_earth.ad`
@@ -104,7 +105,10 @@ defmodule MyApp.Archive
     content_pattern: "**/*.ad",
     image_dir: "images",
     image_pattern: "**/*.{jpg,gif,png}",
-    article_sorter: &(Map.get(&1, :published_at) >= Map.get(&2, :published_at))
+    article_sorter: &(Map.get(&1, :published_at) >= Map.get(&2, :published_at)),
+    application: nil,
+    valid_tags: nil,
+    valid_topics: nil
 end
 ```
 
@@ -119,24 +123,6 @@ assign a custom path to your archive like this:
 defmodule MyApp.Archive
   use Archivist.Archive, archive_dir: "assets/archive",
 end
-```
-
-#### Usage notes for Version 0.1.x
-Archivist version 0.1.x expects you to create your article content directory at
-`priv/articles` at the root of your elixir library, like this:
-
-`priv/articles/journey_to_the_center_of_the_earth.ad`
-
-The following options are availble in Version 0.1.x. Values shown are defaults:
-
-```elixir
-defmodule MyApp.Archive
-  use Archivist.Archive
-    content_dir: "priv/articles",
-    content_pattern: "**/*.ad",
-    image_dir: "priv/images",
-    image_pattern: "**/*.{jpg,gif,png}",
-    article_sorter: &(Map.get(&1, :published_at) >= Map.get(&2, :published_at))
 ```
 
 ## Arcdown
@@ -366,16 +352,8 @@ the `MyappWeb.Endpoint` module, like this:
 defmodule MyappWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :myapp
 
-  socket "/socket", MyappWeb.UserSocket,
-    websocket: true,
-    longpoll: false
-
-  plug Plug.Static,
-    at: "/",
-    from: :myapp,
-    gzip: false,
-    only: ~w(css fonts images js favicon.ico robots.txt)
-
+  # app name here will be :myapp or :myapp_blog depending on which otp app
+  # contains the content archive
   plug Plug.Static,
     at: "/blog/images/",
     from: {:myapp_blog, "priv/archive/images"}
