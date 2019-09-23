@@ -45,8 +45,10 @@ defmodule Archivist.Archive do
         content_parser: Earmark,
         article_parser: Arcdown,
         application: nil,
+        slug_warnings: true,
         valid_tags: nil,
-        valid_topics: nil
+        valid_topics: nil,
+        valid_authors: nil
       ]
 
       @settings Keyword.merge(@defaults, options)
@@ -70,8 +72,10 @@ defmodule Archivist.Archive do
     image_pattern = settings[:image_pattern]
     article_sorter = settings[:article_sorter]
     article_parser = settings[:article_parser]
+    slug_warnings = settings[:slug_warnings]
     valid_topics = settings[:valid_topics]
     valid_tags = settings[:valid_tags]
+    valid_authors = settings[:valid_authors]
 
     article_paths = Parser.build_paths(archive_dir, content_dir, content_pattern, application)
     image_paths = Parser.build_paths(archive_dir, image_dir, image_pattern, application)
@@ -83,8 +87,8 @@ defmodule Archivist.Archive do
     topics_list = Parser.parse_topics_list(articles, valid_topics)
     topics = Parser.parse_topics(articles)
     tags = Parser.parse_tags(articles, valid_tags)
-    authors = Parser.parse_attr(:author, articles)
-    slugs = Parser.parse_attr(:slug, articles)
+    authors = Parser.parse_authors(articles, valid_authors)
+    slugs = Parser.parse_slugs(articles, slug_warnings)
 
     # quote individual article paths as external resources so that they can be
     # tracked later for autoloading, etc.

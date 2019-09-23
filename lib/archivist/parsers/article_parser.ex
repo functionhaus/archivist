@@ -1,7 +1,7 @@
 defmodule Archivist.ArticleParser do
 
   alias Archivist.MapUtils
-
+  alias Archivist.EnumUtils
 
   # if no application is given, then we just want to expand the paths relative
   # to the
@@ -65,6 +65,16 @@ defmodule Archivist.ArticleParser do
     |> warn_invalid(valid_tags, :tags)
   end
 
+  def parse_authors(articles, valid_authors) do
+    parse_attr(:author, articles)
+    |> warn_invalid(valid_authors, :authors)
+  end
+
+  def parse_slugs(articles, slug_warnings) do
+    parse_attr(:slug, articles)
+    |> warn_duplicate(slug_warnings, :slugs)
+  end
+
   defp warn_invalid(parsed_items, valid_items, attr_name) do
     if valid_items do
       invalid_items = Enum.filter(parsed_items, fn item ->
@@ -79,6 +89,21 @@ defmodule Archivist.ArticleParser do
     end
 
     parsed_items
+  end
+
+  defp warn_duplicate(items, warnings, attr_name) do
+    if warnings do
+
+      {_uniqs, duplicates} = EnumUtils.split_uniq(items)
+
+      if Enum.count(duplicates) > 0 do
+        joined_dups = Enum.join(duplicates, ", ")
+        "Archivist Archive contains duplicate #{attr_name}: #{joined_dups}"
+        |> IO.warn(Macro.Env.stacktrace(__ENV__))
+      end
+    end
+
+    items
   end
 
   def parse_topics(articles) do

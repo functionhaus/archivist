@@ -19,8 +19,12 @@ defmodule LocalArchive do
       :modern_classic,
       :sci_fi,
       :thrillers
+    ],
+    valid_authors: [
+      "Jules Verne",
+      "Julian Blaustein",
+      "Michael Mann"
     ]
-
 end
 
 defmodule RemoteArchive do
