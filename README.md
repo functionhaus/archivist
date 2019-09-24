@@ -24,8 +24,10 @@ content and articles are stored in a dedicated library and seperate repository
 in order to reduce content-related git clutter in your primary application
 repo.
 
-* Archivist currently doesn't parse article content as markdown, but will add
-optional content parsing in future versions (like 0.3.x).
+* Archivist allows you parse content by passing an anonymous function into the
+`content_parser` flag. By default, content is parsed as Markdown with the
+`Earmark` library. However the anonymous function interface allows for
+completely flexible parsing.
 
 * Archivist adds default attributes for author names and email addresses, as
 well as sorting content by author.
@@ -62,7 +64,7 @@ dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:archivist, "~> 0.2"}
+    {:archivist, "~> 0.3"}
   ]
 end
 ```
@@ -97,7 +99,7 @@ Archive.article_paths()
 Archive.image_paths()
 ```
 
-Archivist 0.2.x versions expect you to create your article content directory at
+Archivist 0.3.x and 0.2.x versions expect you to create your article content directory at
 `priv/archive/articles` at the root of your elixir library, like this:
 
 `priv/archive/articles/journey_to_the_center_of_the_earth.ad`
@@ -108,19 +110,20 @@ shown are the defaults:
 
 ```elixir
 defmodule MyApp.Archive
-  use Archivist.Archive
+  use Archivist.Archive,
     archive_dir: "priv/archive",
     content_dir: "articles",
     content_pattern: "**/*.ad",
     image_dir: "images",
     image_pattern: "**/*.{jpg,gif,png}",
-    article_parser: &Arcdown.parse_file(&1),
     article_sorter: &(Map.get(&1, :published_at) >= Map.get(&2, :published_at)),
-    slug_warnings: true,
+    article_parser: &Arcdown.parse_file(&1),
+    content_parser: &Earmark.as_html!(&1),
     application: nil,
+    slug_warnings: true,
     valid_tags: nil,
     valid_topics: nil,
-    valid_authors: nil,
+    valid_authors: nil
 end
 ```
 
@@ -178,8 +181,8 @@ World) is a 1951 American black-and-white science fiction film from 20th Century
 Fox, produced by Julian Blaustein and directed by Robert Wise.
 ```
 
-`0.2.x` and `0.1.x` versions of Archivist will parse and return article content
-as `Archivist.Article` structs. The parsing output of the above article example
+By default Archivist will parse and return article content as
+`Archivist.Article` structs. The parsing output of the above article example
 would look like this:
 
 ```elixir
@@ -236,7 +239,7 @@ Here is an example of an excerpt from the mixfile of an intermediate library:
 ```elixir
   defp deps do
     [
-      {:archivist, "~> 0.2"},
+      {:archivist, "~> 0.3"},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
     ]
   end
@@ -278,7 +281,8 @@ MyappBlog.Archive.topics()
 ## Parsed Content Constraints
 
 As of Archivist version `0.2.6` archives can receive flags for lists of
-`valid_topics`, `valid_tags` and `valid_authors`, like this:
+`valid_topics` and `valid_tags`. Version `0.2.9` added support for
+`valid_authors` constraints. Here are some examples of constraints:
 
 ```elixir
 defmodule Myapp.Archive do
@@ -395,25 +399,6 @@ defmodule MyappWeb.Endpoint do
 ```
 
 ## Development Notes
-
-A quick review of the `Archivist.Archive` implementation reveals an additional
-option that isn't otherwise mentioned in this README:
-
-```elixir
-defmodule MyApp.Archive
-  use Archivist.Archive, content_parser: Earmark
-end
-```
-
-This option is currently a placeholder for future functionality but does not
-serve any purpose to the user for the time being. Some notes on forthcoming
-features:
-
-* While `Earmark` is included with Archivist, functionality for parsing content
-as Earmark has not yet been added. Future versions (like 0.3.x) will add
-something like a `parsed_content` attribute to the parsed articles flag, which
-will contain content parsed as Earmark. Setting this value to `nil` will cause
-the article parser not to parse the content at compile-time.
 
 Please find additional information about known issues and planned features for
 Archivist in the [issues tracker](https://github.com/functionhaus/archivist/issues).
