@@ -32,6 +32,18 @@ defmodule Archivist.ArticleParser do
     |> Stream.map(&struct(struct_type, &1))
   end
 
+  def parse_content(articles_stream, parser) do
+    case parser do
+      nil -> articles_stream
+      _ ->
+        Stream.map(articles_stream, fn article ->
+          content = Map.get(article, :content)
+          parsed_content = parser.(content)
+          Map.put(article, :parsed_content, parsed_content)
+        end)
+    end
+  end
+
   def parse_attrs(attr, articles) do
     articles
     |> Stream.flat_map(&Map.get(&1, attr))

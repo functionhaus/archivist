@@ -1,31 +1,73 @@
 defmodule Archivist.Archive do
 
   @moduledoc """
-  Module that coordinates the structured parsing and return of assets in the
-  articles root directory.
+  The heart of Archivist is the `Archive` module, which acts as a repository for
+  exposing query functions for articles, slugs, topics, etc. You can create an
+  Archive out of any Elixir module by using `Archivist.Archive` like this:
 
-  Precompiles and provides interface to interact with your articles.
-
-  By most Elixir and Erlang conventions this module should be called
-  'Archivist.Repo' since it's being used for data access, but this library is
-  called Archivist so we're calling it an Archive. Deal with it.
-
-  defmodule MyApp.Archive do
-    use Archivist.Archive,
-      root: "some/other/dir",
-      body_parser: Earmark
-
+  ```elixir
+  defmodule MyApp.Archive
+    use Archivist.Archive
   end
 
+  # this alias is just a nicety, not required
   alias MyApp.Archive
 
-  {:ok, articles} = Archive.all()
-  {:ok, authors} = Archive.authors()
-  {:ok, image_paths} = Archive.image_paths()
-  {:ok, tags} = Archive.tags()
-  {:ok, topics} = Archive.topics()
-  {:ok, titles} = Archive.titles()
-  {:ok, slugs} = Archive.slugs()
+  Archive.articles()
+  Archive.topics() # hierarchical topics
+  Archive.topics_list() # flattened topics and sub-topics
+  Archive.tags()
+  Archive.slugs()
+  Archive.authors()
+  ```
+
+  Additionally Archvist exposes helpers for reading paths for articles and
+  image files:
+
+  ```elixir
+  Archive.article_paths()
+  Archive.image_paths()
+  ```
+
+  Archivist 0.2.x versions expect you to create your article content directory at
+  `priv/archive/articles` at the root of your elixir library, like this:
+
+  `priv/archive/articles/journey_to_the_center_of_the_earth.ad`
+
+  If you'd like to customize any of your archive's behavior, you can define any of
+  the following options when it is used in the target archive directory. The values
+  shown are the defaults:
+
+  ```elixir
+  defmodule MyApp.Archive
+    use Archivist.Archive
+      archive_dir: "priv/archive",
+      content_dir: "articles",
+      content_pattern: "**/*.ad",
+      image_dir: "images",
+      image_pattern: "**/*.{jpg,gif,png}",
+      article_parser: &Arcdown.parse_file(&1),
+      article_sorter: &(Map.get(&1, :published_at) >= Map.get(&2, :published_at)),
+      slug_warnings: true,
+      application: nil,
+      valid_tags: nil,
+      valid_topics: nil,
+      valid_authors: nil,
+  end
+  ```
+
+  Archivist will read any files with the `.ad` extension in your content directory
+  or in any of its subdirectories, and parse the content of those files with the
+  parser you've selected (Arcdown by default)
+
+  If you'd like to store your archive somewhere besides `priv/archive` you can
+  assign a custom path to your archive like this:
+
+  ```elixir
+  defmodule MyApp.Archive
+    use Archivist.Archive, archive_dir: "assets/archive",
+  end
+  ```
   """
 
   @doc false
@@ -39,7 +81,8 @@ defmodule Archivist.Archive do
         image_pattern: "**/*.{jpg,gif,png}",
         article_sorter: &(Map.get(&1, :published_at) >= Map.get(&2, :published_at)),
         article_parser: &Arcdown.parse_file(&1),
-        content_parser: Earmark,
+        content_parser: &Earmark.as_html!(&1),
+        content_parser: nil,
         application: nil,
         slug_warnings: true,
         valid_tags: nil,
@@ -68,6 +111,7 @@ defmodule Archivist.Archive do
     image_pattern = settings[:image_pattern]
     article_sorter = settings[:article_sorter]
     article_parser = settings[:article_parser]
+    content_parser = settings[:content_parser]
     slug_warnings = settings[:slug_warnings]
     valid_topics = settings[:valid_topics]
     valid_tags = settings[:valid_tags]
@@ -79,6 +123,7 @@ defmodule Archivist.Archive do
     articles = Stream.map(article_paths, article_parser)
       |> Parser.filter_valid
       |> Parser.convert_structs(Article)
+      |> Parser.parse_content(content_parser)
 
     topics_list = Parser.parse_topics_list(articles, valid_topics)
     topics = Parser.parse_topics(articles)

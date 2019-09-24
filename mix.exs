@@ -1,7 +1,7 @@
 defmodule Archivist.MixProject do
   use Mix.Project
 
-  @version "0.2.10"
+  @version "0.3.0"
   @description "Plain-text, version-controlled blogging in Arcdown and Markdown."
 
   def project do
@@ -41,6 +41,7 @@ defmodule Archivist.MixProject do
   defp deps do
     [
       {:arcdown, "~> 0.1"},
+      {:earmark, "~> 1.4"},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
     ]
   end
