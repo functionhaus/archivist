@@ -26,10 +26,6 @@ defmodule Archivist.Archive do
   {:ok, topics} = Archive.topics()
   {:ok, titles} = Archive.titles()
   {:ok, slugs} = Archive.slugs()
-
-  {:ok, created_asc} = Archive.sort_by :created_at, :asc
-  {:ok, published_desc} = Archive.sort_by :published_at, :desc
-  {:ok, article} = Archive.fetch_by :slug, "some-article"
   """
 
   @doc false
@@ -42,8 +38,8 @@ defmodule Archivist.Archive do
         image_dir: "images",
         image_pattern: "**/*.{jpg,gif,png}",
         article_sorter: &(Map.get(&1, :published_at) >= Map.get(&2, :published_at)),
+        article_parser: &Arcdown.parse_file(&1),
         content_parser: Earmark,
-        article_parser: Arcdown,
         application: nil,
         slug_warnings: true,
         valid_tags: nil,
@@ -80,7 +76,7 @@ defmodule Archivist.Archive do
     article_paths = Parser.build_paths(archive_dir, content_dir, content_pattern, application)
     image_paths = Parser.build_paths(archive_dir, image_dir, image_pattern, application)
 
-    articles = Parser.parse_files(article_paths, article_parser)
+    articles = Stream.map(article_paths, article_parser)
       |> Parser.filter_valid
       |> Parser.convert_structs(Article)
 

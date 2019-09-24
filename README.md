@@ -12,6 +12,9 @@ Archivist is inspired by the general approach of Cẩm Huỳnh's great
 * Archivist articles are formatted in `Arcdown` format by default, allowing
 for more robust articles and article features.
 
+* Article parsing is exposed as an anonymous function, so if you don't
+want to use Arcdown you can parse articles in any other way you'd like.
+
 * Archivist allows articles to be organized into nested *topic* directories for
 better organization. Topic directory and sub-directory naming will be translated
 into a hierarchical system-wide topic and sub-topic structure.
@@ -75,7 +78,7 @@ defmodule MyApp.Archive
   use Archivist.Archive
 end
 
-# the alias is just a nicety here and isn't required by any means
+# this alias is just a nicety, not required
 alias MyApp.Archive
 
 Archive.articles()
@@ -111,6 +114,7 @@ defmodule MyApp.Archive
     content_pattern: "**/*.ad",
     image_dir: "images",
     image_pattern: "**/*.{jpg,gif,png}",
+    article_parser: &Arcdown.parse_file(&1),
     article_sorter: &(Map.get(&1, :published_at) >= Map.get(&2, :published_at)),
     slug_warnings: true,
     application: nil,
@@ -392,18 +396,16 @@ defmodule MyappWeb.Endpoint do
 
 ## Development Notes
 
-A quick review of the `Archivist.Archive` implementation would reveal additional
-options that aren't otherwise mentioned in this README:
+A quick review of the `Archivist.Archive` implementation reveals an additional
+option that isn't otherwise mentioned in this README:
 
 ```elixir
 defmodule MyApp.Archive
-  use Archivist.Archive
-    content_parser: Earmark,
-    article_parser: Arcdown
+  use Archivist.Archive, content_parser: Earmark
 end
 ```
 
-These options are currently placeholders for future functionality but do not
+This option is currently a placeholder for future functionality but does not
 serve any purpose to the user for the time being. Some notes on forthcoming
 features:
 
@@ -412,11 +414,6 @@ as Earmark has not yet been added. Future versions (like 0.3.x) will add
 something like a `parsed_content` attribute to the parsed articles flag, which
 will contain content parsed as Earmark. Setting this value to `nil` will cause
 the article parser not to parse the content at compile-time.
-
-* Also note that that swapping out the content and article parsers
-with different modules currently is not supported. `ContentParser` and
-`ArticleParser` behaviors will be implemented in future versions (likely 0.3.x)
-and will support implementing custom parsers for these elements.
 
 Please find additional information about known issues and planned features for
 Archivist in the [issues tracker](https://github.com/functionhaus/archivist/issues).
