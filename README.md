@@ -9,52 +9,25 @@ be used in conjunction with the [Arcdown plaintext article parser library](https
 Archivist is inspired by the general approach of Cẩm Huỳnh's great
 [Nabo](https://github.com/qcam/nabo) library with some key differences:
 
-* Archivist articles are formatted in `Arcdown` format by default, allowing
-for more robust articles and article features.
+* Articles are formatted in `Arcdown` format by default, allowing for more robust articles and article features.
 
-* Article parsing is exposed as an anonymous function, so if you don't
-want to use Arcdown you can parse articles in any other way you'd like.
+* Content parsing and sorting mechanisms are exposed as anonymous functions, easiliy exposing custom functionality.
 
-* Archivist allows articles to be organized into nested *topic* directories for
-better organization. Topic directory and sub-directory naming will be translated
-into a hierarchical system-wide topic and sub-topic structure.
+* Articles can be organized into nested *topic* directories for better organization. Topics are parsed in a hierarchical structure.
 
-* Archivist supports the use of an "intermediate library pattern", where
-content and articles are stored in a dedicated library and seperate repository
-in order to reduce content-related git clutter in your primary application
-repo.
+* Use of an "intermediate library pattern" is supported, allowing content and articles to be stored in a dedicated library and separate repository.
 
-* Archivist allows you parse content by passing an anonymous function into the
-`content_parser` flag. By default, content is parsed as Markdown with the
-`Earmark` library. However the anonymous function interface allows for
-completely flexible parsing.
+* Default attributes are included for both author names and email addresses
 
-* Archivist adds default attributes for author names and email addresses, as
-well as sorting content by author.
+* `created_at` and `published_at` timestamps are permitted
 
-* Archivist exposes its article sorting mechanism as an anonymous function,
-allowing you to implement custom article-sorting strategies at compile-time.
+* Flexible *tags* can be applied as desired to any article
 
-* Archivist allows you to set a `created_at` and `published_at` timestamps to
-give you greater control over content and how it's used.
+* Custom content constraints throw warnings during compilation if violated
 
-* Archivist allows you to *tag* your articles however you'd like, and provides
-functions for sorting and collecting all tags used across your archive.
+* Slug uniqueness is enforced by default and triggers compile-time warnings
 
-* Archivist generates lists of tags, topics, and authors at compile-time, giving
-you more flexibility in your content's front-end presentation without having to
-perform additional parsing at runtime.
-
-* Archivist allows you to set constrained lists of `valid_topics`, `valid_tags`,
-and `valid_authors`, and will throw warnings during compilation if tags and topics
-are used that do not appear in those lists.
-
-* Archivist enforces the uniqueness of article slugs by default and will throw
-compile-time warnings if slugs are duplicated across article content. This
-behavior can be turned off with the `slug_warnings` option.
-
-* Archivist allows you to store image files and parse and reference the paths to
-those files within your archive at `archive/images`
+* Image files can be stored alongside articles, and accessed with helpers
 
 ## Installation
 
