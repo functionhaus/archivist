@@ -189,6 +189,7 @@ would look like this:
 %Archivist.Article{
   author: "Julian Blaustein",
   content: "The Day the Earth Stood Still (a.k.a. Farewell to the Master and Journey to the\nWorld) is a 1951 American black-and-white science fiction film from 20th Century\nFox, produced by Julian Blaustein and directed by Robert Wise.\n",
+  parsed_content: "<p>The Day the Earth Stood Still (a.k.a. Farewell to the Master and Journey to the\nWorld) is a 1951 American black-and-white science fiction film from 20th Century\nFox, produced by Julian Blaustein and directed by Robert Wise.</p>\n",
   created_at: #DateTime<2019-01-20 22:24:00Z>,
   email: "julian@blaustein.com",
   published_at: #DateTime<2019-04-02 04:30:00Z>,
