@@ -119,8 +119,8 @@ defmodule MyApp.Archive
     article_sorter: &(Map.get(&1, :published_at) >= Map.get(&2, :published_at)),
     article_parser: &Arcdown.parse_file(&1),
     content_parser: &Earmark.as_html!(&1),
-    application: nil,
     slug_warnings: true,
+    application: nil,
     valid_tags: nil,
     valid_topics: nil,
     valid_authors: nil
